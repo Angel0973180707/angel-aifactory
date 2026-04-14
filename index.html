@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#5b63f6" />
+  <title>Story Video Factory</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SV</div>
+        <div>
+          <h1>Story Video Factory</h1>
+          <p>故事影音工廠 v1</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
+        <button class="nav-btn" data-view="story-pool">Story Pool</button>
+        <button class="nav-btn" data-view="video-factory">Video Factory</button>
+        <button class="nav-btn" data-view="publish-factory">Publish Factory</button>
+      </nav>
+      <div class="sidebar-note">
+        <h3>v1 目標</h3>
+        <ul>
+          <li>選故事</li>
+          <li>一鍵生成</li>
+          <li>看長片與 Shorts</li>
+          <li>送去發布層</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <h2 id="page-title">Dashboard</h2>
+          <p id="page-subtitle">今日內容狀態總覽</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="refresh-btn" class="btn btn-secondary">重新整理</button>
+          <button id="mock-generate-btn" class="btn btn-primary">一鍵生成今日內容</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="view active">
+        <div class="stats-grid" id="stats-grid"></div>
+        <div class="panel-grid two-col">
+          <section class="panel">
+            <div class="panel-header">
+              <h3>今日待辦</h3>
+            </div>
+            <div id="todo-list"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header">
+              <h3>最近生成內容</h3>
+            </div>
+            <div id="recent-generated"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="story-pool" class="view">
+        <div class="panel">
+          <div class="panel-header split">
+            <div>
+              <h3>Story Pool</h3>
+              <p>挑故事、篩選、送生成</p>
+            </div>
+            <div class="filter-row">
+              <select id="filter-topic">
+                <option value="all">全部主題群</option>
+              </select>
+              <select id="filter-priority">
+                <option value="all">全部優先級</option>
+                <option value="1">優先級 1</option>
+                <option value="2">優先級 2</option>
+                <option value="3">優先級 3</option>
+              </select>
+              <button id="generate-selected-btn" class="btn btn-primary">生成選中內容</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>ID</th>
+                  <th>標題</th>
+                  <th>核心痛點</th>
+                  <th>主題群</th>
+                  <th>優先級</th>
+                  <th>工具</th>
+                  <th>狀態</th>
+                  <th>查看</th>
+                </tr>
+              </thead>
+              <tbody id="story-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="video-factory" class="view">
+        <div class="panel">
+          <div class="panel-header split">
+            <div>
+              <h3>Video Factory</h3>
+              <p>長影片與 Shorts 生成結果</p>
+            </div>
+            <button id="send-to-publish-all" class="btn btn-secondary">全部送去發布層</button>
+          </div>
+          <div id="video-factory-list" class="stack"></div>
+        </div>
+      </section>
+
+      <section id="publish-factory" class="view">
+        <div class="panel">
+          <div class="panel-header split">
+            <div>
+              <h3>Publish Factory</h3>
+              <p>發佈標題、文案、Hashtags</p>
+            </div>
+            <button id="generate-publish-mock" class="btn btn-primary">生成發布文案</button>
+          </div>
+          <div id="publish-list" class="stack"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="story-detail-dialog">
+    <div class="dialog-header">
+      <h3 id="dialog-title">故事詳情</h3>
+      <button id="close-dialog" class="icon-btn">✕</button>
+    </div>
+    <div id="dialog-content" class="dialog-content"></div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
