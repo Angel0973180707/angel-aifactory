@@ -3,305 +3,238 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI內容工廠 PWA v1</title>
+<title>AI內容工廠 PWA v1（AI引擎版）</title>
 
 <style>
-:root{
-  --bg:#f6f7fb;
-  --card:#ffffff;
-  --primary:#6c63ff;
-  --text:#1f2937;
-  --sub:#6b7280;
-  --line:#e5e7eb;
-}
-
-*{box-sizing:border-box;margin:0;padding:0;}
-
-body{
-  font-family:system-ui;
-  background:var(--bg);
-  color:var(--text);
-}
-
-.container{
-  max-width:1400px;
-  margin:auto;
-  padding:20px;
-}
-
-h1{
-  margin-bottom:20px;
-}
-
-.section{
-  background:var(--card);
-  border-radius:16px;
-  padding:16px;
-  margin-bottom:20px;
-  box-shadow:0 6px 20px rgba(0,0,0,.05);
-}
-
-.section-title{
-  font-weight:700;
-  margin-bottom:12px;
-}
-
-.row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:10px;
-}
-
-button{
-  background:var(--primary);
-  color:#fff;
-  border:none;
-  padding:8px 12px;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-button.secondary{
-  background:#e5e7eb;
-  color:#111;
-}
-
-textarea{
-  width:100%;
-  min-height:80px;
-  padding:10px;
-  border-radius:10px;
-  border:1px solid var(--line);
-  margin-top:6px;
-}
-
-.block{
-  margin-top:12px;
-}
-
-.label{
-  font-size:12px;
-  color:var(--sub);
-}
-
-.version-box{
-  display:flex;
-  gap:10px;
-}
-
-.version{
-  flex:1;
-}
-
-.publish-bar{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#fff;
-  padding:10px;
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-
-.disabled{
-  background:#ccc !important;
-  cursor:not-allowed;
-}
+body{font-family:sans-serif;background:#f5f6fa;margin:0}
+.container{max-width:1200px;margin:auto;padding:20px}
+.section{background:#fff;padding:16px;margin-bottom:16px;border-radius:12px}
+textarea{width:100%;min-height:80px;margin-top:6px}
+button{margin:4px;padding:6px 10px;border:none;border-radius:6px;background:#6c63ff;color:#fff}
+.secondary{background:#ddd;color:#000}
+.publish-bar{position:fixed;bottom:0;width:100%;background:#fff;padding:10px;border-top:1px solid #ccc;display:flex;justify-content:space-between}
+.disabled{background:#ccc!important}
+.prompt-box{background:#f1f1ff;padding:10px;border-radius:8px;margin-top:6px;font-size:12px;white-space:pre-wrap}
 </style>
 </head>
 
 <body>
-
 <div class="container">
-<h1>AI內容工廠 PWA v1</h1>
+<h2>AI內容工廠（AI引擎版）</h2>
 
-<!-- 1 收素材 -->
-<div class="section" data-section="input">
-  <div class="section-title">1. 收素材</div>
-
-  <div class="row">
-    <button onclick="copyPrompt('story_analysis')">故事分析</button>
-    <button onclick="copyPrompt('insight_parse')">感悟解析</button>
-  </div>
-
-  <div class="block">
-    <div class="label">NotebookLM貼上</div>
-    <textarea id="input_raw"></textarea>
-  </div>
-
-  <div class="block">
-    <button onclick="saveVersion('input')">存版本</button>
-  </div>
+<!-- 收素材 -->
+<div class="section">
+<h3>① 收素材（KLM理解）</h3>
+<button onclick="copyPrompt('klm')">KLM分析</button>
+<div class="prompt-box" id="klm_box"></div>
+<textarea id="input_raw" placeholder="貼上故事"></textarea>
 </div>
 
-<!-- 2 做內容 -->
-<div class="section" data-section="content">
-  <div class="section-title">2. 做內容</div>
+<!-- 做內容 -->
+<div class="section">
+<h3>② 做內容（AI生成）</h3>
 
-  <div class="row">
-    <button onclick="copyPrompt('ai_topic')">AI選題</button>
-    <button onclick="copyPrompt('shorts')">Shorts生成</button>
-  </div>
+<button onclick="copyPrompt('tue')">週二｜心靈感悟</button>
+<button onclick="copyPrompt('thu')">週四｜心腦科學</button>
+<button onclick="copyPrompt('sat')">週六｜教養故事</button>
 
-  <div class="block">
-    <div class="label">AI結果</div>
-    <textarea id="content_ai"></textarea>
-  </div>
+<div class="prompt-box" id="main_prompt"></div>
 
-  <div class="block version-box">
-    <div class="version">
-      <div class="label">Original</div>
-      <textarea id="content_original"></textarea>
-    </div>
-    <div class="version">
-      <div class="label">Revised</div>
-      <textarea id="content_revised"></textarea>
-    </div>
-    <div class="version">
-      <div class="label">Final</div>
-      <textarea id="content_final"></textarea>
-    </div>
-  </div>
+<textarea id="content_ai" placeholder="AI結果"></textarea>
 
-  <button onclick="saveVersion('content')">存版本</button>
+<h4>版本</h4>
+<textarea id="content_original" placeholder="original"></textarea>
+<textarea id="content_revised" placeholder="revised"></textarea>
+<textarea id="content_final" placeholder="final"></textarea>
+
+<button onclick="saveToSheet('video_generation')">回填影片表</button>
 </div>
 
-<!-- 3 排節奏 -->
-<div class="section" data-section="schedule">
-  <div class="section-title">3. 排節奏</div>
-
-  <div class="row">
-    <button onclick="copyPrompt('weekly_plan')">排程生成</button>
-  </div>
-
-  <div class="block">
-    <textarea id="schedule_data"></textarea>
-  </div>
-
-  <button onclick="saveVersion('schedule')">存版本</button>
+<!-- Shorts -->
+<div class="section">
+<h3>③ Shorts生成</h3>
+<button onclick="copyPrompt('shorts')">Shorts指令</button>
+<div class="prompt-box" id="shorts_box"></div>
+<textarea id="shorts_data"></textarea>
 </div>
 
-<!-- 4 長工具 -->
-<div class="section" data-section="tool">
-  <div class="section-title">4. 長工具</div>
-
-  <div class="row">
-    <button onclick="copyPrompt('tool_generate')">工具生成</button>
-  </div>
-
-  <div class="block">
-    <textarea id="tool_data"></textarea>
-  </div>
-
-  <button onclick="saveVersion('tool')">存版本</button>
+<!-- 發佈 -->
+<div class="section">
+<h3>④ 發佈文案</h3>
+<button onclick="copyPrompt('publish')">發佈文案</button>
+<div class="prompt-box" id="publish_box"></div>
+<textarea id="publish_data"></textarea>
 </div>
 
 </div>
 
-<!-- 發佈區 -->
 <div class="publish-bar">
-  <div id="publishStatus">尚未完成</div>
-  <button id="publishBtn" class="disabled" onclick="publish()">發佈</button>
+<div id="status">尚未完成</div>
+<button id="publishBtn" class="disabled" onclick="publish()">發佈</button>
 </div>
 
 <script>
-// ===== Prompt庫 =====
+// ===== GAS =====
+const GAS_URL = "👉貼上你的GAS網址";
+
+// ===== API =====
+async function callGAS(action, params={}){
+  const url = new URL(GAS_URL);
+  url.searchParams.set("action", action);
+  Object.entries(params).forEach(([k,v])=>{
+    if(v!==undefined) url.searchParams.set(k,v);
+  });
+
+  const res = await fetch(url);
+  const text = await res.text();
+  return JSON.parse(text);
+}
+
+async function appendRow(sheet,data){
+  return await callGAS("appendRow",{sheet,data:JSON.stringify(data)});
+}
+
+// ===== AI指令庫 =====
 const prompts = {
-  story_analysis: "請分析故事：核心痛點、轉折、洞見",
-  insight_parse: "請解析感悟並轉為可用內容",
-  ai_topic: "請生成3個可爆內容主題",
-  shorts: "請生成7段Shorts分鏡",
-  weekly_plan: "請生成12週排程",
-  tool_generate: "請轉為工具模型"
+
+klm: `
+請將以下故事做KLM分析：
+
+1. 核心痛點（K）
+2. 關鍵轉折（L）
+3. 深層洞見（M）
+4. 可轉內容方向（短片 / 長片 / 工具）
+`,
+
+tue: `
+你是情緒療癒型內容創作者
+
+請將內容轉為：
+
+【週二心靈感悟】
+- 溫柔
+- 有畫面
+- 可共感
+
+輸出：
+1. 標題
+2. 內文（短影片）
+3. 7段分鏡
+`,
+
+thu: `
+你是心腦科學講解者
+
+請轉為：
+
+【週四心腦科學】
+結合：
+- 杏仁核
+- 前額葉
+- 神經系統
+
+輸出：
+1. 標題
+2. 解釋（白話）
+3. 應用場景
+4. 7段短片
+`,
+
+sat: `
+你是教養故事創作者
+
+請轉為：
+
+【週六教養故事】
+結構：
+1. 衝突
+2. 情緒
+3. 轉折
+4. 引導句（家長可用）
+
+輸出完整腳本
+`,
+
+shorts: `
+請生成7支Shorts：
+
+每支包含：
+- Hook（3秒）
+- 故事
+- 收尾
+- CTA
+`,
+
+publish: `
+請生成發佈文案：
+
+- 標題
+- 短文
+- hashtags
+- CTA導流
+`
 };
 
-// ===== 複製指令 =====
+// ===== 顯示 + 複製 =====
 function copyPrompt(key){
-  navigator.clipboard.writeText(prompts[key]);
-  alert("已複製指令");
+  const text = prompts[key];
+  navigator.clipboard.writeText(text);
+  showPrompt(key, text);
+  alert("已複製");
 }
 
-// ===== 版本系統 =====
-function saveVersion(section){
-  const data = collectSection(section);
-  localStorage.setItem("version_"+section, JSON.stringify(data));
-  alert("已存版本");
+function showPrompt(key,text){
+  if(key==="klm") document.getElementById("klm_box").innerText=text;
+  if(["tue","thu","sat"].includes(key)) document.getElementById("main_prompt").innerText=text;
+  if(key==="shorts") document.getElementById("shorts_box").innerText=text;
+  if(key==="publish") document.getElementById("publish_box").innerText=text;
 }
 
-// ===== 收集資料 =====
-function collectSection(section){
-  if(section==="input"){
-    return {
-      raw: document.getElementById("input_raw").value
-    };
-  }
-
-  if(section==="content"){
-    return {
-      original: document.getElementById("content_original").value,
-      revised: document.getElementById("content_revised").value,
-      final: document.getElementById("content_final").value
-    };
-  }
-
-  if(section==="schedule"){
-    return {
-      data: document.getElementById("schedule_data").value
-    };
-  }
-
-  if(section==="tool"){
-    return {
-      data: document.getElementById("tool_data").value
-    };
-  }
+// ===== 回填 =====
+async function saveToSheet(sheet){
+  const data = {
+    ai: document.getElementById("content_ai").value,
+    final: document.getElementById("content_final").value,
+    created_at: new Date().toISOString()
+  };
+  await appendRow(sheet,data);
+  alert("回填成功");
 }
 
 // ===== 發佈防呆 =====
 function checkPublish(){
   const final = document.getElementById("content_final").value.trim();
   const btn = document.getElementById("publishBtn");
-  const status = document.getElementById("publishStatus");
 
-  if(final === ""){
+  if(!final){
     btn.classList.add("disabled");
-    status.innerText = "❌ final_copy 為空，禁止發佈";
+    document.getElementById("status").innerText="❌ final為空";
   }else{
     btn.classList.remove("disabled");
-    status.innerText = "✅ 可發佈";
+    document.getElementById("status").innerText="✅ 可發佈";
   }
 }
 
-document.getElementById("content_final").addEventListener("input", checkPublish);
+document.getElementById("content_final").addEventListener("input",checkPublish);
 
 // ===== 發佈 =====
-function publish(){
-  const final = document.getElementById("content_final").value.trim();
-  if(final===""){
+async function publish(){
+  const final = document.getElementById("content_final").value;
+
+  if(!final){
     alert("禁止發佈");
     return;
   }
 
-  // GAS API 預留
-  fetch("/gas-api",{
-    method:"POST",
-    body: JSON.stringify({
-      action:"publish",
-      final_copy: final
-    })
+  await appendRow("publish_content",{
+    full_text:final,
+    created_at:new Date().toISOString()
   });
 
-  alert("已發佈（模擬）");
+  alert("✅ 已發佈");
 }
 
-// ===== 初始化 =====
 checkPublish();
-
 </script>
-
 </body>
 </html>
