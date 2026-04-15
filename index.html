@@ -1,147 +1,307 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#5b63f6" />
-  <title>Story Video Factory</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="styles.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI內容工廠 PWA v1</title>
+
+<style>
+:root{
+  --bg:#f6f7fb;
+  --card:#ffffff;
+  --primary:#6c63ff;
+  --text:#1f2937;
+  --sub:#6b7280;
+  --line:#e5e7eb;
+}
+
+*{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  font-family:system-ui;
+  background:var(--bg);
+  color:var(--text);
+}
+
+.container{
+  max-width:1400px;
+  margin:auto;
+  padding:20px;
+}
+
+h1{
+  margin-bottom:20px;
+}
+
+.section{
+  background:var(--card);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:20px;
+  box-shadow:0 6px 20px rgba(0,0,0,.05);
+}
+
+.section-title{
+  font-weight:700;
+  margin-bottom:12px;
+}
+
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+
+button{
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  padding:8px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+button.secondary{
+  background:#e5e7eb;
+  color:#111;
+}
+
+textarea{
+  width:100%;
+  min-height:80px;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  margin-top:6px;
+}
+
+.block{
+  margin-top:12px;
+}
+
+.label{
+  font-size:12px;
+  color:var(--sub);
+}
+
+.version-box{
+  display:flex;
+  gap:10px;
+}
+
+.version{
+  flex:1;
+}
+
+.publish-bar{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#fff;
+  padding:10px;
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.disabled{
+  background:#ccc !important;
+  cursor:not-allowed;
+}
+</style>
 </head>
+
 <body>
-  <div class="app-shell">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">SV</div>
-        <div>
-          <h1>Story Video Factory</h1>
-          <p>故事影音工廠 v1</p>
-        </div>
-      </div>
-      <nav class="nav">
-        <button class="nav-btn active" data-view="dashboard">Dashboard</button>
-        <button class="nav-btn" data-view="story-pool">Story Pool</button>
-        <button class="nav-btn" data-view="video-factory">Video Factory</button>
-        <button class="nav-btn" data-view="publish-factory">Publish Factory</button>
-      </nav>
-      <div class="sidebar-note">
-        <h3>v1 目標</h3>
-        <ul>
-          <li>選故事</li>
-          <li>一鍵生成</li>
-          <li>看長片與 Shorts</li>
-          <li>送去發布層</li>
-        </ul>
-      </div>
-    </aside>
 
-    <main class="main">
-      <header class="topbar">
-        <div>
-          <h2 id="page-title">Dashboard</h2>
-          <p id="page-subtitle">今日內容狀態總覽</p>
-        </div>
-        <div class="topbar-actions">
-          <button id="refresh-btn" class="btn btn-secondary">重新整理</button>
-          <button id="mock-generate-btn" class="btn btn-primary">一鍵生成今日內容</button>
-        </div>
-      </header>
+<div class="container">
+<h1>AI內容工廠 PWA v1</h1>
 
-      <section id="dashboard" class="view active">
-        <div class="stats-grid" id="stats-grid"></div>
-        <div class="panel-grid two-col">
-          <section class="panel">
-            <div class="panel-header">
-              <h3>今日待辦</h3>
-            </div>
-            <div id="todo-list"></div>
-          </section>
-          <section class="panel">
-            <div class="panel-header">
-              <h3>最近生成內容</h3>
-            </div>
-            <div id="recent-generated"></div>
-          </section>
-        </div>
-      </section>
+<!-- 1 收素材 -->
+<div class="section" data-section="input">
+  <div class="section-title">1. 收素材</div>
 
-      <section id="story-pool" class="view">
-        <div class="panel">
-          <div class="panel-header split">
-            <div>
-              <h3>Story Pool</h3>
-              <p>挑故事、篩選、送生成</p>
-            </div>
-            <div class="filter-row">
-              <select id="filter-topic">
-                <option value="all">全部主題群</option>
-              </select>
-              <select id="filter-priority">
-                <option value="all">全部優先級</option>
-                <option value="1">優先級 1</option>
-                <option value="2">優先級 2</option>
-                <option value="3">優先級 3</option>
-              </select>
-              <button id="generate-selected-btn" class="btn btn-primary">生成選中內容</button>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>ID</th>
-                  <th>標題</th>
-                  <th>核心痛點</th>
-                  <th>主題群</th>
-                  <th>優先級</th>
-                  <th>工具</th>
-                  <th>狀態</th>
-                  <th>查看</th>
-                </tr>
-              </thead>
-              <tbody id="story-table-body"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section id="video-factory" class="view">
-        <div class="panel">
-          <div class="panel-header split">
-            <div>
-              <h3>Video Factory</h3>
-              <p>長影片與 Shorts 生成結果</p>
-            </div>
-            <button id="send-to-publish-all" class="btn btn-secondary">全部送去發布層</button>
-          </div>
-          <div id="video-factory-list" class="stack"></div>
-        </div>
-      </section>
-
-      <section id="publish-factory" class="view">
-        <div class="panel">
-          <div class="panel-header split">
-            <div>
-              <h3>Publish Factory</h3>
-              <p>發佈標題、文案、Hashtags</p>
-            </div>
-            <button id="generate-publish-mock" class="btn btn-primary">生成發布文案</button>
-          </div>
-          <div id="publish-list" class="stack"></div>
-        </div>
-      </section>
-    </main>
+  <div class="row">
+    <button onclick="copyPrompt('story_analysis')">故事分析</button>
+    <button onclick="copyPrompt('insight_parse')">感悟解析</button>
   </div>
 
-  <dialog id="story-detail-dialog">
-    <div class="dialog-header">
-      <h3 id="dialog-title">故事詳情</h3>
-      <button id="close-dialog" class="icon-btn">✕</button>
-    </div>
-    <div id="dialog-content" class="dialog-content"></div>
-  </dialog>
+  <div class="block">
+    <div class="label">NotebookLM貼上</div>
+    <textarea id="input_raw"></textarea>
+  </div>
 
-  <script src="app.js"></script>
+  <div class="block">
+    <button onclick="saveVersion('input')">存版本</button>
+  </div>
+</div>
+
+<!-- 2 做內容 -->
+<div class="section" data-section="content">
+  <div class="section-title">2. 做內容</div>
+
+  <div class="row">
+    <button onclick="copyPrompt('ai_topic')">AI選題</button>
+    <button onclick="copyPrompt('shorts')">Shorts生成</button>
+  </div>
+
+  <div class="block">
+    <div class="label">AI結果</div>
+    <textarea id="content_ai"></textarea>
+  </div>
+
+  <div class="block version-box">
+    <div class="version">
+      <div class="label">Original</div>
+      <textarea id="content_original"></textarea>
+    </div>
+    <div class="version">
+      <div class="label">Revised</div>
+      <textarea id="content_revised"></textarea>
+    </div>
+    <div class="version">
+      <div class="label">Final</div>
+      <textarea id="content_final"></textarea>
+    </div>
+  </div>
+
+  <button onclick="saveVersion('content')">存版本</button>
+</div>
+
+<!-- 3 排節奏 -->
+<div class="section" data-section="schedule">
+  <div class="section-title">3. 排節奏</div>
+
+  <div class="row">
+    <button onclick="copyPrompt('weekly_plan')">排程生成</button>
+  </div>
+
+  <div class="block">
+    <textarea id="schedule_data"></textarea>
+  </div>
+
+  <button onclick="saveVersion('schedule')">存版本</button>
+</div>
+
+<!-- 4 長工具 -->
+<div class="section" data-section="tool">
+  <div class="section-title">4. 長工具</div>
+
+  <div class="row">
+    <button onclick="copyPrompt('tool_generate')">工具生成</button>
+  </div>
+
+  <div class="block">
+    <textarea id="tool_data"></textarea>
+  </div>
+
+  <button onclick="saveVersion('tool')">存版本</button>
+</div>
+
+</div>
+
+<!-- 發佈區 -->
+<div class="publish-bar">
+  <div id="publishStatus">尚未完成</div>
+  <button id="publishBtn" class="disabled" onclick="publish()">發佈</button>
+</div>
+
+<script>
+// ===== Prompt庫 =====
+const prompts = {
+  story_analysis: "請分析故事：核心痛點、轉折、洞見",
+  insight_parse: "請解析感悟並轉為可用內容",
+  ai_topic: "請生成3個可爆內容主題",
+  shorts: "請生成7段Shorts分鏡",
+  weekly_plan: "請生成12週排程",
+  tool_generate: "請轉為工具模型"
+};
+
+// ===== 複製指令 =====
+function copyPrompt(key){
+  navigator.clipboard.writeText(prompts[key]);
+  alert("已複製指令");
+}
+
+// ===== 版本系統 =====
+function saveVersion(section){
+  const data = collectSection(section);
+  localStorage.setItem("version_"+section, JSON.stringify(data));
+  alert("已存版本");
+}
+
+// ===== 收集資料 =====
+function collectSection(section){
+  if(section==="input"){
+    return {
+      raw: document.getElementById("input_raw").value
+    };
+  }
+
+  if(section==="content"){
+    return {
+      original: document.getElementById("content_original").value,
+      revised: document.getElementById("content_revised").value,
+      final: document.getElementById("content_final").value
+    };
+  }
+
+  if(section==="schedule"){
+    return {
+      data: document.getElementById("schedule_data").value
+    };
+  }
+
+  if(section==="tool"){
+    return {
+      data: document.getElementById("tool_data").value
+    };
+  }
+}
+
+// ===== 發佈防呆 =====
+function checkPublish(){
+  const final = document.getElementById("content_final").value.trim();
+  const btn = document.getElementById("publishBtn");
+  const status = document.getElementById("publishStatus");
+
+  if(final === ""){
+    btn.classList.add("disabled");
+    status.innerText = "❌ final_copy 為空，禁止發佈";
+  }else{
+    btn.classList.remove("disabled");
+    status.innerText = "✅ 可發佈";
+  }
+}
+
+document.getElementById("content_final").addEventListener("input", checkPublish);
+
+// ===== 發佈 =====
+function publish(){
+  const final = document.getElementById("content_final").value.trim();
+  if(final===""){
+    alert("禁止發佈");
+    return;
+  }
+
+  // GAS API 預留
+  fetch("/gas-api",{
+    method:"POST",
+    body: JSON.stringify({
+      action:"publish",
+      final_copy: final
+    })
+  });
+
+  alert("已發佈（模擬）");
+}
+
+// ===== 初始化 =====
+checkPublish();
+
+</script>
+
 </body>
 </html>
