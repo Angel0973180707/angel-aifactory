@@ -1,4 +1,4 @@
-const CACHE_NAME = 'svf-v1';
+const CACHE_NAME = 'svf-v1.1';
 const ASSETS = ['./', './index.html', './styles.css', './app.js', './manifest.json'];
 
 self.addEventListener('install', event => {
