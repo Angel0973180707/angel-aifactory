@@ -1,240 +1,1350 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI內容工廠 PWA v1（AI引擎版）</title>
-
-<style>
-body{font-family:sans-serif;background:#f5f6fa;margin:0}
-.container{max-width:1200px;margin:auto;padding:20px}
-.section{background:#fff;padding:16px;margin-bottom:16px;border-radius:12px}
-textarea{width:100%;min-height:80px;margin-top:6px}
-button{margin:4px;padding:6px 10px;border:none;border-radius:6px;background:#6c63ff;color:#fff}
-.secondary{background:#ddd;color:#000}
-.publish-bar{position:fixed;bottom:0;width:100%;background:#fff;padding:10px;border-top:1px solid #ccc;display:flex;justify-content:space-between}
-.disabled{background:#ccc!important}
-.prompt-box{background:#f1f1ff;padding:10px;border-radius:8px;margin-top:6px;font-size:12px;white-space:pre-wrap}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI內容工廠 PWA v1.0</title>
+  <meta name="theme-color" content="#6c63ff" />
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --card-soft:#f8f9ff;
+      --text:#1f2937;
+      --sub:#6b7280;
+      --line:#e5e7eb;
+      --primary:#6c63ff;
+      --primary-dark:#5548ff;
+      --ok:#16a34a;
+      --warn:#d97706;
+      --danger:#dc2626;
+      --shadow:0 12px 30px rgba(15,23,42,.08);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      padding:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+    }
+    body{padding-bottom:96px}
+    .wrap{
+      max-width:1400px;
+      margin:0 auto;
+      padding:18px;
+    }
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:16px;
+    }
+    .titlebox h1{
+      margin:0;
+      font-size:28px;
+      font-weight:800;
+    }
+    .titlebox p{
+      margin:6px 0 0;
+      color:var(--sub);
+      font-size:14px;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid #eef1f5;
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:16px;
+      margin-bottom:16px;
+    }
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .section-title h2{
+      margin:0;
+      font-size:20px;
+    }
+    .sub{
+      color:var(--sub);
+      font-size:13px;
+    }
+    .grid{
+      display:grid;
+      gap:12px;
+    }
+    .grid-2{grid-template-columns:1fr 1fr}
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .grid-4{grid-template-columns:repeat(4,1fr)}
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .field label{
+      font-size:13px;
+      color:var(--sub);
+      font-weight:700;
+    }
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      background:#fff;
+      color:var(--text);
+      font-size:14px;
+      outline:none;
+    }
+    input:focus,select:focus,textarea:focus{
+      border-color:#b7b4ff;
+      box-shadow:0 0 0 4px rgba(108,99,255,.1);
+    }
+    textarea{
+      min-height:100px;
+      resize:vertical;
+      line-height:1.55;
+    }
+    textarea.tall{min-height:180px}
+    textarea.xl{min-height:250px}
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 14px;
+      background:var(--primary);
+      color:#fff;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    button:hover{background:var(--primary-dark)}
+    button.secondary{background:#eef2ff;color:#4338ca}
+    button.ghost{background:#f3f4f6;color:#111827}
+    button.ok{background:var(--ok)}
+    button.warn{background:var(--warn)}
+    button.danger{background:var(--danger)}
+    button[disabled]{opacity:.55;cursor:not-allowed}
+    .prompt-box,.status-box{
+      background:var(--card-soft);
+      border:1px dashed #cfd4ff;
+      border-radius:14px;
+      padding:12px;
+      white-space:pre-wrap;
+      line-height:1.6;
+      font-size:13px;
+      min-height:72px;
+    }
+    .version-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:12px;
+    }
+    .meta-grid{
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:10px;
+    }
+    .sheet-grid{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      margin-top:12px;
+    }
+    .sheet-box{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fcfcff;
+    }
+    .sheet-box h4{
+      margin:0 0 8px;
+      font-size:14px;
+    }
+    .sheet-status{
+      font-size:12px;
+      line-height:1.5;
+      color:var(--sub);
+      word-break:break-word;
+    }
+    .footer-bar{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:12px 16px;
+      border-top:1px solid var(--line);
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(10px);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      z-index:20;
+    }
+    .footer-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+    .footer-status{
+      font-size:14px;
+      color:var(--sub);
+      font-weight:700;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#f3f4f6;
+      font-size:12px;
+      font-weight:700;
+      color:#374151;
+    }
+    .small{
+      font-size:12px;
+      color:var(--sub);
+      line-height:1.6;
+    }
+    @media (max-width:1100px){
+      .grid-2,.grid-3,.grid-4,.version-grid,.meta-grid,.sheet-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
-<div class="container">
-<h2>AI內容工廠（AI引擎版）</h2>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="titlebox">
+        <h1>AI內容工廠 PWA v1.0</h1>
+        <p>單檔版｜已對接 AI Content Factory GAS v1.0</p>
+      </div>
+      <div class="btn-row">
+        <button class="ghost" id="btnLoadDraft">讀取草稿</button>
+        <button class="ghost" id="btnSaveDraft">儲存草稿</button>
+        <button class="secondary" id="btnExportJson">匯出 JSON</button>
+        <button class="danger" id="btnClearAll">清空</button>
+      </div>
+    </div>
 
-<!-- 收素材 -->
-<div class="section">
-<h3>① 收素材（KLM理解）</h3>
-<button onclick="copyPrompt('klm')">KLM分析</button>
-<div class="prompt-box" id="klm_box"></div>
-<textarea id="input_raw" placeholder="貼上故事"></textarea>
-</div>
+    <div class="card">
+      <div class="section-title">
+        <h2>系統設定</h2>
+        <div class="sub">先填 GAS 網址，再開始使用</div>
+      </div>
+      <div class="grid grid-2">
+        <div class="field">
+          <label for="gasUrl">GAS Web App URL</label>
+          <input type="text" id="gasUrl" placeholder="https://script.google.com/macros/s/你的部署ID/exec" />
+        </div>
+        <div class="field">
+          <label for="defaultPlatform">預設平台</label>
+          <select id="defaultPlatform">
+            <option value="youtube">YouTube</option>
+            <option value="facebook">Facebook</option>
+            <option value="instagram">Instagram</option>
+            <option value="threads">Threads</option>
+            <option value="line">LINE</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="ghost" id="btnPing">測試 GAS</button>
+        <button class="ghost" id="btnInitHeaders">初始化 13 分頁表頭</button>
+        <span class="pill" id="pingStatus">尚未測試</span>
+      </div>
+    </div>
 
-<!-- 做內容 -->
-<div class="section">
-<h3>② 做內容（AI生成）</h3>
+    <div class="card">
+      <div class="section-title">
+        <h2>① 收素材</h2>
+        <div class="sub">故事 / 感悟 / KLM 理解</div>
+      </div>
 
-<button onclick="copyPrompt('tue')">週二｜心靈感悟</button>
-<button onclick="copyPrompt('thu')">週四｜心腦科學</button>
-<button onclick="copyPrompt('sat')">週六｜教養故事</button>
+      <div class="meta-grid">
+        <div class="field">
+          <label for="storyId">story_id</label>
+          <input type="text" id="storyId" placeholder="S202604150001" />
+        </div>
+        <div class="field">
+          <label for="contentType">content_type</label>
+          <select id="contentType">
+            <option value="story">story</option>
+            <option value="insight">insight</option>
+            <option value="brain">brain</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="weekNo">week_no</label>
+          <input type="text" id="weekNo" placeholder="Week1" />
+        </div>
+        <div class="field">
+          <label for="videoType">video_type</label>
+          <select id="videoType">
+            <option value="long">long</option>
+            <option value="shorts">shorts</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="publishDate">publish_date</label>
+          <input type="date" id="publishDate" />
+        </div>
+        <div class="field">
+          <label for="seriesType">系列</label>
+          <select id="seriesType">
+            <option value="tue">週二｜心靈感悟</option>
+            <option value="thu">週四｜心腦科學</option>
+            <option value="sat">週六｜教養故事</option>
+          </select>
+        </div>
+      </div>
 
-<div class="prompt-box" id="main_prompt"></div>
+      <div class="grid grid-2" style="margin-top:14px">
+        <div>
+          <div class="field">
+            <label for="storyTitle">素材標題</label>
+            <input type="text" id="storyTitle" placeholder="例如：孩子一哭，我先停下來" />
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label for="storyRaw">原始故事／感悟</label>
+            <textarea id="storyRaw" class="xl" placeholder="貼上故事全文、感悟、逐字稿"></textarea>
+          </div>
+        </div>
 
-<textarea id="content_ai" placeholder="AI結果"></textarea>
+        <div>
+          <div class="btn-row">
+            <button data-prompt="klm_story">故事分析</button>
+            <button data-prompt="klm_insight">感悟解析</button>
+            <button data-prompt="klm_recycle">內容回收</button>
+            <button data-prompt="klm_tool">工具判斷</button>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label>KLM 指令區</label>
+            <div class="prompt-box" id="klmPromptBox">點按鈕載入指令</div>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label for="klmResult">KLM / NotebookLM 結果</label>
+            <textarea id="klmResult" class="xl" placeholder="貼回分析結果"></textarea>
+          </div>
+          <div class="btn-row" style="margin-top:12px">
+            <button class="ghost" data-copy-source="klmPromptBox">複製 KLM 指令</button>
+            <button class="ok" id="btnSaveStory">回填 01 故事庫</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-<h4>版本</h4>
-<textarea id="content_original" placeholder="original"></textarea>
-<textarea id="content_revised" placeholder="revised"></textarea>
-<textarea id="content_final" placeholder="final"></textarea>
+    <div class="card">
+      <div class="section-title">
+        <h2>② 做內容</h2>
+        <div class="sub">內容索引 / AI選題 / 長片生成 / 版本系統</div>
+      </div>
 
-<button onclick="saveToSheet('video_generation')">回填影片表</button>
-</div>
+      <div class="grid grid-4">
+        <div class="field">
+          <label for="topicGroup">topic_group</label>
+          <input type="text" id="topicGroup" placeholder="情緒 / 教養 / 心腦科學" />
+        </div>
+        <div class="field">
+          <label for="scenarioType">scenario_type</label>
+          <input type="text" id="scenarioType" placeholder="孩子崩潰 / 大人自責" />
+        </div>
+        <div class="field">
+          <label for="mainTool">main_tool</label>
+          <input type="text" id="mainTool" placeholder="情緒急救卡" />
+        </div>
+        <div class="field">
+          <label for="subTool">sub_tool</label>
+          <input type="text" id="subTool" placeholder="對話引導句" />
+        </div>
+      </div>
 
-<!-- Shorts -->
-<div class="section">
-<h3>③ Shorts生成</h3>
-<button onclick="copyPrompt('shorts')">Shorts指令</button>
-<div class="prompt-box" id="shorts_box"></div>
-<textarea id="shorts_data"></textarea>
-</div>
+      <div class="grid grid-3" style="margin-top:12px">
+        <div class="field">
+          <label for="corePain">core_pain</label>
+          <textarea id="corePain" placeholder="最痛的點"></textarea>
+        </div>
+        <div class="field">
+          <label for="coreTurn">core_turn</label>
+          <textarea id="coreTurn" placeholder="轉折"></textarea>
+        </div>
+        <div class="field">
+          <label for="coreInsight">core_insight</label>
+          <textarea id="coreInsight" placeholder="洞見"></textarea>
+        </div>
+      </div>
 
-<!-- 發佈 -->
-<div class="section">
-<h3>④ 發佈文案</h3>
-<button onclick="copyPrompt('publish')">發佈文案</button>
-<div class="prompt-box" id="publish_box"></div>
-<textarea id="publish_data"></textarea>
-</div>
+      <div class="grid grid-2" style="margin-top:14px">
+        <div>
+          <div class="btn-row">
+            <button data-prompt="gen_tue">週二｜心靈感悟</button>
+            <button data-prompt="gen_thu">週四｜心腦科學</button>
+            <button data-prompt="gen_sat">週六｜教養故事</button>
+            <button data-prompt="opt_emotion" class="secondary">情緒優化</button>
+            <button data-prompt="opt_hook" class="secondary">Hook優化</button>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label>主生成指令</label>
+            <div class="prompt-box" id="mainPromptBox">點按鈕載入指令</div>
+          </div>
+        </div>
 
-</div>
+        <div>
+          <div class="field">
+            <label for="videoTopic">video_topic</label>
+            <input type="text" id="videoTopic" placeholder="例如：孩子一哭，我先穩住自己" />
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label for="aiResult">AI 結果區</label>
+            <textarea id="aiResult" class="tall" placeholder="貼回 AI 結果"></textarea>
+          </div>
+        </div>
+      </div>
 
-<div class="publish-bar">
-<div id="status">尚未完成</div>
-<button id="publishBtn" class="disabled" onclick="publish()">發佈</button>
-</div>
+      <div class="version-grid" style="margin-top:14px">
+        <div class="field">
+          <label for="versionOriginal">original</label>
+          <textarea id="versionOriginal" class="tall" placeholder="原始版本"></textarea>
+        </div>
+        <div class="field">
+          <label for="versionRevised">revised</label>
+          <textarea id="versionRevised" class="tall" placeholder="修正版本"></textarea>
+        </div>
+        <div class="field">
+          <label for="versionFinal">final_copy</label>
+          <textarea id="versionFinal" class="tall" placeholder="最終可發佈版本"></textarea>
+        </div>
+      </div>
 
-<script>
-// ===== GAS =====
-const GAS_URL = "👉貼上你的GAS網址";
+      <div class="btn-row" style="margin-top:12px">
+        <button class="ghost" data-copy-source="mainPromptBox">複製主生成指令</button>
+        <button class="ghost" id="btnUseAiToOriginal">AI結果 → original</button>
+        <button class="ghost" id="btnOriginalToRevised">original → revised</button>
+        <button class="ghost" id="btnRevisedToFinal">revised → final</button>
+        <button class="ok" id="btnSaveContentIndex">回填 02 內容索引</button>
+        <button class="ok" id="btnSaveAiTopics">回填 04 AI選題</button>
+        <button class="ok" id="btnSaveVideoGeneration">回填 06 影片生成</button>
+      </div>
+    </div>
 
-// ===== API =====
-async function callGAS(action, params={}){
-  const url = new URL(GAS_URL);
-  url.searchParams.set("action", action);
-  Object.entries(params).forEach(([k,v])=>{
-    if(v!==undefined) url.searchParams.set(k,v);
-  });
+    <div class="card">
+      <div class="section-title">
+        <h2>③ 排節奏＋Shorts＋發佈</h2>
+        <div class="sub">排程 / Shorts / 發佈文案 / 發佈防呆</div>
+      </div>
 
-  const res = await fetch(url);
-  const text = await res.text();
-  return JSON.parse(text);
-}
+      <div class="grid grid-3">
+        <div class="field">
+          <label for="weekTheme">week_theme</label>
+          <input type="text" id="weekTheme" placeholder="例如：情緒穩定週" />
+        </div>
+        <div class="field">
+          <label for="redirectTool">redirect_tool</label>
+          <input type="text" id="redirectTool" placeholder="例如：情緒急救30秒工具" />
+        </div>
+        <div class="field">
+          <label for="shortsCount">shorts_count</label>
+          <input type="text" id="shortsCount" placeholder="7" />
+        </div>
+      </div>
 
-async function appendRow(sheet,data){
-  return await callGAS("appendRow",{sheet,data:JSON.stringify(data)});
-}
+      <div class="grid grid-2" style="margin-top:12px">
+        <div class="field">
+          <label for="weeklyPlanText">12週排程內容</label>
+          <textarea id="weeklyPlanText" class="tall" placeholder="貼回排程內容"></textarea>
+        </div>
+        <div>
+          <div class="btn-row">
+            <button data-prompt="gen_shorts">Shorts生成</button>
+            <button data-prompt="gen_publish">發佈文案</button>
+            <button data-prompt="opt_redirect" class="secondary">導流優化</button>
+            <button data-prompt="opt_platform" class="secondary">平台優化</button>
+            <button data-prompt="opt_round3" class="secondary">三輪優化</button>
+          </div>
+          <div class="field" style="margin-top:12px">
+            <label>Shorts / 發佈指令</label>
+            <div class="prompt-box" id="subPromptBox">點按鈕載入指令</div>
+          </div>
+        </div>
+      </div>
 
-// ===== AI指令庫 =====
-const prompts = {
+      <div class="grid grid-2" style="margin-top:12px">
+        <div class="field">
+          <label for="shortsResult">Shorts 結果</label>
+          <textarea id="shortsResult" class="xl" placeholder="貼回 Shorts 內容"></textarea>
+        </div>
+        <div class="field">
+          <label for="publishResult">發佈文案結果</label>
+          <textarea id="publishResult" class="xl" placeholder="貼回發佈文案"></textarea>
+        </div>
+      </div>
 
-klm: `
-請將以下故事做KLM分析：
+      <div class="btn-row" style="margin-top:12px">
+        <button class="ghost" data-copy-source="subPromptBox">複製 Shorts / 發佈指令</button>
+        <button class="ok" id="btnSaveWeeklyPlan">回填 05 排程</button>
+        <button class="ok" id="btnSaveShortsGeneration">回填 07 Shorts</button>
+        <button class="ok" id="btnSavePublishContent">回填 08 發佈內容</button>
+      </div>
+    </div>
 
-1. 核心痛點（K）
-2. 關鍵轉折（L）
-3. 深層洞見（M）
-4. 可轉內容方向（短片 / 長片 / 工具）
-`,
+    <div class="card">
+      <div class="section-title">
+        <h2>④ 長工具</h2>
+        <div class="sub">工具孵化池 / 工具庫</div>
+      </div>
 
-tue: `
-你是情緒療癒型內容創作者
+      <div class="grid grid-4">
+        <div class="field">
+          <label for="ideaId">idea_id</label>
+          <input type="text" id="ideaId" placeholder="TI..." />
+        </div>
+        <div class="field">
+          <label for="toolName">工具名稱</label>
+          <input type="text" id="toolName" placeholder="例如：情緒急救30秒" />
+        </div>
+        <div class="field">
+          <label for="toolType">工具類型</label>
+          <input type="text" id="toolType" placeholder="卡片 / 清單 / PWA" />
+        </div>
+        <div class="field">
+          <label for="toolUrl">工具網址</label>
+          <input type="text" id="toolUrl" placeholder="https://..." />
+        </div>
+      </div>
 
-請將內容轉為：
+      <div class="grid grid-2" style="margin-top:12px">
+        <div class="field">
+          <label for="toolDemand">需求 / 用途</label>
+          <textarea id="toolDemand" class="tall" placeholder="工具需求與使用情境"></textarea>
+        </div>
+        <div class="field">
+          <label for="toolNote">備註</label>
+          <textarea id="toolNote" class="tall" placeholder="驗證結果 / 補充說明"></textarea>
+        </div>
+      </div>
 
-【週二心靈感悟】
-- 溫柔
-- 有畫面
-- 可共感
+      <div class="btn-row" style="margin-top:12px">
+        <button class="ok" id="btnSaveToolIncubator">回填 11 孵化池</button>
+        <button class="ok" id="btnSaveToolLibrary">回填 10 工具庫</button>
+      </div>
+    </div>
 
+    <div class="card">
+      <div class="section-title">
+        <h2>多表回填狀態</h2>
+        <div class="sub">可單表回填，也可一鍵核心閉環回填</div>
+      </div>
+
+      <div class="small">
+        一鍵核心閉環：<b>01 故事庫 → 02 內容索引 → 04 AI選題 → 06 影片生成 → 08 發佈內容</b><br>
+        若 final_copy 為空，系統會略過 08 發佈內容。
+      </div>
+
+      <div class="sheet-grid">
+        <div class="sheet-box">
+          <h4>01 故事庫</h4>
+          <div class="sheet-status" id="status_stories_db">尚未回填</div>
+        </div>
+        <div class="sheet-box">
+          <h4>02 內容索引</h4>
+          <div class="sheet-status" id="status_content_index">尚未回填</div>
+        </div>
+        <div class="sheet-box">
+          <h4>04 AI選題</h4>
+          <div class="sheet-status" id="status_ai_topics">尚未回填</div>
+        </div>
+        <div class="sheet-box">
+          <h4>06 影片生成</h4>
+          <div class="sheet-status" id="status_video_generation">尚未回填</div>
+        </div>
+        <div class="sheet-box">
+          <h4>08 發佈內容</h4>
+          <div class="sheet-status" id="status_publish_content">尚未回填</div>
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:12px">
+        <button class="warn" id="btnGenerateIds">自動補 ID</button>
+        <button class="ghost" id="btnValidate">檢查資料</button>
+        <button class="ok" id="btnAutoFillCore">一鍵核心閉環回填</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <div class="footer-status" id="footerStatus">尚未發佈｜請先完成 final_copy</div>
+    <div class="footer-actions">
+      <button class="ok" id="btnPublish">發佈</button>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "ai_content_factory_pwa_v1_single";
+
+    const prompts = {
+      klm_story: `請根據以下故事內容做完整理解，輸出：
+1. 核心痛點
+2. 關鍵轉折
+3. 深層洞見
+4. 可延伸主題
+5. 可做長片方向
+6. 可做 Shorts 方向
+7. 可轉成工具方向
+8. 建議 topic_group
+9. 建議 scenario_type
+10. 建議 main_tool / sub_tool`,
+
+      klm_insight: `請把以下心靈感悟拆成可用內容資產，輸出：
+1. 主題
+2. 子題
+3. 痛點
+4. 洞見
+5. 可共感句
+6. 週二方向
+7. 週四方向
+8. 週六方向
+9. 工具方向
+10. 導流關鍵句`,
+
+      klm_recycle: `請把以下內容做內容回收，整理成：
+1. 可重用句
+2. 可做標題句
+3. 可做 Hook
+4. 可做 Shorts
+5. 可做發佈文案
+6. 可做 CTA
+7. 可做工具名稱`,
+
+      klm_tool: `請根據以下故事／感悟判斷工具潛力，輸出：
+1. 是否適合做工具
+2. 工具名稱
+3. main_tool
+4. sub_tool
+5. 使用情境
+6. topic_group
+7. 用戶需求
+8. MVP 形式
+9. 是否適合進工具孵化池`,
+
+      gen_tue: `你是溫柔且能共感的短影音編劇。
+請把素材改寫成【週二心靈感悟】內容。
 輸出：
-1. 標題
-2. 內文（短影片）
-3. 7段分鏡
-`,
+A. 標題 3 個
+B. 長片主題 1 個
+C. 長片骨架
+D. 7 支 Shorts 題目
+E. 導流 CTA`,
 
-thu: `
-你是心腦科學講解者
-
-請轉為：
-
-【週四心腦科學】
-結合：
-- 杏仁核
-- 前額葉
-- 神經系統
-
+      gen_thu: `你是把心腦科學講得白話又有共感的內容編輯。
+請把素材改寫成【週四心腦科學】內容。
+至少結合多腦／多系統，不只杏仁核與前額葉。
 輸出：
-1. 標題
-2. 解釋（白話）
-3. 應用場景
-4. 7段短片
-`,
+A. 標題 3 個
+B. 白話主題說明
+C. 生活案例
+D. 長片骨架
+E. 7 支 Shorts 題目
+F. CTA`,
 
-sat: `
-你是教養故事創作者
+      gen_sat: `你是會把生活衝突寫成有轉折力量的教養故事編劇。
+請把素材改寫成【週六教養故事】內容。
+輸出：
+A. 標題 3 個
+B. 完整長片故事骨架
+C. 關鍵場景 5-7 個
+D. 家長引導句 3 句
+E. 7 支 Shorts 題目
+F. CTA`,
 
-請轉為：
+      gen_shorts: `請根據以下長片內容，生成 7 支 Shorts。
+每支輸出：
+1. title
+2. hook
+3. core_line
+4. story
+5. end
+6. redirect_tool`,
 
-【週六教養故事】
-結構：
-1. 衝突
-2. 情緒
-3. 轉折
-4. 引導句（家長可用）
+      gen_publish: `請根據以下 final_copy 與主題，生成發佈內容。
+輸出：
+1. title
+2. full_text
+3. short_text
+4. hashtags
+5. cta
+6. link 留空`,
 
-輸出完整腳本
-`,
+      opt_emotion: `請把以下文案做情緒優化：
+1. 更有共感
+2. 更柔軟
+3. 保留力量
+4. 不要矯情
+5. 保留畫面感`,
 
-shorts: `
-請生成7支Shorts：
+      opt_hook: `請把以下內容做 Hook 優化：
+1. 開頭更抓人
+2. 更貼近日常痛點
+3. 3 秒內可理解
+4. 保留原主題`,
 
-每支包含：
-- Hook（3秒）
-- 故事
-- 收尾
-- CTA
-`,
+      opt_redirect: `請把以下內容做導流優化：
+1. 導流自然
+2. 工具出現不突兀
+3. 結尾有下一步感
+4. 保留陪伴感`,
 
-publish: `
-請生成發佈文案：
+      opt_platform: `請把以下發佈文案做平台優化：
+1. 口語化
+2. 手機閱讀友善
+3. 段落簡潔
+4. hashtag 精簡
+5. cta 清楚`,
 
-- 標題
-- 短文
-- hashtags
-- CTA導流
-`
-};
+      opt_round3: `請對以下文案做三輪優化，輸出：
+1. 第1輪 語順更好
+2. 第2輪 共感更強
+3. 第3輪 導流更自然
+4. 最終 final_copy`
+    };
 
-// ===== 顯示 + 複製 =====
-function copyPrompt(key){
-  const text = prompts[key];
-  navigator.clipboard.writeText(text);
-  showPrompt(key, text);
-  alert("已複製");
-}
+    const fields = [
+      "gasUrl","defaultPlatform","storyId","contentType","weekNo","videoType","publishDate","seriesType",
+      "storyTitle","storyRaw","klmResult","topicGroup","scenarioType","mainTool","subTool",
+      "corePain","coreTurn","coreInsight","videoTopic","aiResult","versionOriginal","versionRevised",
+      "versionFinal","weekTheme","redirectTool","shortsCount","weeklyPlanText","shortsResult",
+      "publishResult","ideaId","toolName","toolType","toolUrl","toolDemand","toolNote"
+    ];
 
-function showPrompt(key,text){
-  if(key==="klm") document.getElementById("klm_box").innerText=text;
-  if(["tue","thu","sat"].includes(key)) document.getElementById("main_prompt").innerText=text;
-  if(key==="shorts") document.getElementById("shorts_box").innerText=text;
-  if(key==="publish") document.getElementById("publish_box").innerText=text;
-}
+    const $ = (id) => document.getElementById(id);
 
-// ===== 回填 =====
-async function saveToSheet(sheet){
-  const data = {
-    ai: document.getElementById("content_ai").value,
-    final: document.getElementById("content_final").value,
-    created_at: new Date().toISOString()
-  };
-  await appendRow(sheet,data);
-  alert("回填成功");
-}
+    function getValue(id){
+      return ($(id)?.value || "").trim();
+    }
 
-// ===== 發佈防呆 =====
-function checkPublish(){
-  const final = document.getElementById("content_final").value.trim();
-  const btn = document.getElementById("publishBtn");
+    function setValue(id, value){
+      if ($(id)) $(id).value = value || "";
+    }
 
-  if(!final){
-    btn.classList.add("disabled");
-    document.getElementById("status").innerText="❌ final為空";
-  }else{
-    btn.classList.remove("disabled");
-    document.getElementById("status").innerText="✅ 可發佈";
-  }
-}
+    function nowIso(){
+      return new Date().toISOString();
+    }
 
-document.getElementById("content_final").addEventListener("input",checkPublish);
+    function makeId(prefix){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const da = String(d.getDate()).padStart(2, "0");
+      const h = String(d.getHours()).padStart(2, "0");
+      const mi = String(d.getMinutes()).padStart(2, "0");
+      const s = String(d.getSeconds()).padStart(2, "0");
+      const ms = String(d.getMilliseconds()).padStart(3, "0");
+      return `${prefix}${y}${m}${da}${h}${mi}${s}${ms}`;
+    }
 
-// ===== 發佈 =====
-async function publish(){
-  const final = document.getElementById("content_final").value;
+    function saveDraft(){
+      const data = {};
+      fields.forEach(id => data[id] = $(id)?.value || "");
+      data.klmPromptBox = $("klmPromptBox").textContent || "";
+      data.mainPromptBox = $("mainPromptBox").textContent || "";
+      data.subPromptBox = $("subPromptBox").textContent || "";
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      toast("草稿已儲存");
+    }
 
-  if(!final){
-    alert("禁止發佈");
-    return;
-  }
+    function loadDraft(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw){
+        toast("目前沒有草稿");
+        return;
+      }
+      try{
+        const data = JSON.parse(raw);
+        fields.forEach(id => {
+          if ($(id) && typeof data[id] === "string") $(id).value = data[id];
+        });
+        $("klmPromptBox").textContent = data.klmPromptBox || "點按鈕載入指令";
+        $("mainPromptBox").textContent = data.mainPromptBox || "點按鈕載入指令";
+        $("subPromptBox").textContent = data.subPromptBox || "點按鈕載入指令";
+        updatePublishState();
+        toast("草稿已讀取");
+      }catch(err){
+        toast("草稿讀取失敗");
+      }
+    }
 
-  await appendRow("publish_content",{
-    full_text:final,
-    created_at:new Date().toISOString()
-  });
+    function exportJson(){
+      const data = {};
+      fields.forEach(id => data[id] = $(id)?.value || "");
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ai-content-factory-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
-  alert("✅ 已發佈");
-}
+    function clearAll(){
+      fields.forEach(id => setValue(id, ""));
+      $("klmPromptBox").textContent = "點按鈕載入指令";
+      $("mainPromptBox").textContent = "點按鈕載入指令";
+      $("subPromptBox").textContent = "點按鈕載入指令";
+      ["stories_db","content_index","ai_topics","video_generation","publish_content"].forEach(sheet => {
+        setSheetStatus(sheet, "尚未回填", true);
+      });
+      $("pingStatus").textContent = "尚未測試";
+      updatePublishState();
+      toast("已清空");
+    }
 
-checkPublish();
-</script>
+    function toast(msg){
+      $("footerStatus").textContent = msg;
+    }
+
+    async function copyText(text){
+      await navigator.clipboard.writeText(text || "");
+      toast("已複製");
+    }
+
+    function loadPrompt(key){
+      const text = prompts[key] || "";
+      if (key.startsWith("klm_")) $("klmPromptBox").textContent = text;
+      else if (["gen_shorts","gen_publish","opt_redirect","opt_platform","opt_round3"].includes(key)) $("subPromptBox").textContent = text;
+      else $("mainPromptBox").textContent = text;
+      copyText(text);
+    }
+
+    function buildIdsIfNeeded(){
+      if (!getValue("storyId")) setValue("storyId", makeId("S"));
+      if (!getValue("ideaId")) setValue("ideaId", makeId("TI"));
+      if (!getValue("weekNo")) setValue("weekNo", "Week1");
+      if (!getValue("shortsCount")) setValue("shortsCount", "7");
+      if (!getValue("publishDate")){
+        const d = new Date();
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const da = String(d.getDate()).padStart(2, "0");
+        setValue("publishDate", `${y}-${m}-${da}`);
+      }
+      toast("已補 ID");
+    }
+
+    function validateCore(){
+      const problems = [];
+      if (!getValue("storyId")) problems.push("缺 story_id");
+      if (!getValue("storyTitle")) problems.push("缺素材標題");
+      if (!getValue("storyRaw")) problems.push("缺原始故事");
+      if (!getValue("videoTopic")) problems.push("缺 video_topic");
+      if (!getValue("corePain")) problems.push("缺 core_pain");
+      if (!getValue("coreInsight")) problems.push("缺 core_insight");
+      return problems;
+    }
+
+    function validatePublishReady(){
+      const problems = validateCore();
+      if (!getValue("versionFinal")) problems.push("缺 final_copy");
+      return problems;
+    }
+
+    function updatePublishState(){
+      if (!getValue("versionFinal")){
+        $("btnPublish").disabled = true;
+        $("footerStatus").textContent = "尚未發佈｜請先完成 final_copy";
+      } else {
+        $("btnPublish").disabled = false;
+        $("footerStatus").textContent = "可發佈｜final_copy 已完成";
+      }
+    }
+
+    function setSheetStatus(sheet, text, ok){
+      const el = $(`status_${sheet}`);
+      if (!el) return;
+      el.textContent = text;
+      el.style.color = ok ? "#16a34a" : "#dc2626";
+    }
+
+    async function callGAS(action, params = {}, method = "GET"){
+      const gasUrl = getValue("gasUrl");
+      if (!gasUrl) throw new Error("請先填 GAS URL");
+
+      if (method === "GET"){
+        const url = new URL(gasUrl);
+        url.searchParams.set("action", action);
+        Object.entries(params).forEach(([k, v]) => {
+          if (v !== undefined && v !== null && v !== "") {
+            url.searchParams.set(k, String(v));
+          }
+        });
+        const res = await fetch(url.toString(), { method: "GET" });
+        const text = await res.text();
+        const json = JSON.parse(text);
+        if (!json.ok) throw new Error(json.error || "GAS錯誤");
+        return json;
+      }
+
+      const res = await fetch(gasUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, ...params })
+      });
+      const text = await res.text();
+      const json = JSON.parse(text);
+      if (!json.ok) throw new Error(json.error || "GAS錯誤");
+      return json;
+    }
+
+    async function pingGAS(){
+      try{
+        const res = await callGAS("ping");
+        $("pingStatus").textContent = `連線成功｜${res.version}`;
+        toast("GAS 連線成功");
+      }catch(err){
+        $("pingStatus").textContent = `連線失敗｜${err.message}`;
+        toast("GAS 連線失敗");
+      }
+    }
+
+    async function initHeaders(){
+      try{
+        await callGAS("initSheetHeaders");
+        toast("13 分頁表頭初始化完成");
+      }catch(err){
+        toast(`初始化失敗：${err.message}`);
+      }
+    }
+
+    function keywordsFromText(text){
+      return String(text || "")
+        .replace(/\n+/g, " ")
+        .split(/[、，,。\s]+/)
+        .map(v => v.trim())
+        .filter(Boolean)
+        .slice(0, 12)
+        .join(", ");
+    }
+
+    function contentId(){
+      return `CT-${getValue("storyId") || makeId("S")}`;
+    }
+
+    function topicId(){
+      return `TP-${getValue("storyId") || makeId("S")}`;
+    }
+
+    function videoId(){
+      return `VD-${getValue("storyId") || makeId("S")}`;
+    }
+
+    function publishId(){
+      return `PB-${getValue("storyId") || makeId("S")}`;
+    }
+
+    function shortsId(){
+      return `SH-${getValue("storyId") || makeId("S")}`;
+    }
+
+    function buildStoryPayload(){
+      return {
+        id: getValue("storyId"),
+        content_type: getValue("contentType"),
+        title: getValue("storyTitle"),
+        story_content: getValue("storyRaw"),
+        core_summary: getValue("klmResult"),
+        core_pain: getValue("corePain"),
+        core_insight: getValue("coreInsight"),
+        keywords: keywordsFromText(`${getValue("storyTitle")} ${getValue("corePain")} ${getValue("coreInsight")}`),
+        main_theme: getValue("topicGroup"),
+        brain_tag: getValue("seriesType") === "thu" ? "TRUE" : "FALSE",
+        tool_potential: getValue("mainTool") ? "TRUE" : "FALSE",
+        publish_status: getValue("versionFinal") ? "ready" : "draft",
+        main_tool: getValue("mainTool"),
+        sub_tool: getValue("subTool"),
+        ext_tool: getValue("redirectTool"),
+        priority: "",
+        topic_group: getValue("topicGroup"),
+        topic_tags: "",
+        scenario_type: getValue("scenarioType"),
+        shorts_potential: getValue("shortsCount"),
+        publish_date: getValue("publishDate"),
+        video_url: "",
+        story_remaining: "",
+        story_alert: "",
+        brain_stock: "",
+        insight_stock: "",
+        shorts_stock: "",
+        channel_stock: "",
+        viral_short: "",
+        shorts_topic: "",
+        shorts_script: getValue("shortsResult"),
+        shorts_hook: "",
+        video_priority: "",
+        today_task: "",
+        weekly_schedule: getValue("weekNo"),
+        date: getValue("publishDate"),
+        video_theme: getValue("weekTheme")
+      };
+    }
+
+    function buildContentIndexPayload(){
+      return {
+        content_id: contentId(),
+        story_id: getValue("storyId"),
+        content_type: getValue("contentType"),
+        topic_group: getValue("topicGroup"),
+        scenario_type: getValue("scenarioType"),
+        core_pain: getValue("corePain"),
+        core_turn: getValue("coreTurn"),
+        core_insight: getValue("coreInsight"),
+        tool_1: getValue("mainTool"),
+        tool_2: getValue("subTool"),
+        tool_3: getValue("redirectTool"),
+        shorts_expand: getValue("shortsResult"),
+        keywords: keywordsFromText(`${getValue("storyTitle")} ${getValue("corePain")} ${getValue("coreInsight")} ${getValue("videoTopic")}`)
+      };
+    }
+
+    function buildAiTopicsPayload(){
+      return {
+        topic_id: topicId(),
+        story_id: getValue("storyId"),
+        title: getValue("storyTitle"),
+        content_type: getValue("contentType"),
+        topic_group: getValue("topicGroup"),
+        scenario_type: getValue("scenarioType"),
+        core_pain: getValue("corePain"),
+        core_insight: getValue("coreInsight"),
+        main_tool: getValue("mainTool"),
+        sub_tool: getValue("subTool"),
+        ext_tool: getValue("redirectTool"),
+        video_topic: getValue("videoTopic"),
+        shorts_count: getValue("shortsCount") || "7",
+        status: "ready"
+      };
+    }
+
+    function buildWeeklyPlanPayload(){
+      return {
+        week_no: getValue("weekNo"),
+        week_theme: getValue("weekTheme"),
+        tue_insight: getValue("seriesType") === "tue" ? getValue("videoTopic") : "",
+        thu_brain: getValue("seriesType") === "thu" ? getValue("videoTopic") : "",
+        sat_story: getValue("seriesType") === "sat" ? getValue("videoTopic") : "",
+        story_id: getValue("storyId"),
+        redirect_tool: getValue("redirectTool"),
+        priority: "",
+        long_video: getValue("videoTopic"),
+        shorts: getValue("shortsResult"),
+        status: "ready"
+      };
+    }
+
+    function buildVideoGenerationPayload(){
+      return {
+        video_id: videoId(),
+        week_no: getValue("weekNo"),
+        video_type: getValue("videoType"),
+        content_id: contentId(),
+        story_id: getValue("storyId"),
+        video_title: getValue("videoTopic"),
+        shorts_title: "",
+        core_message: getValue("coreInsight"),
+        script_outline: getValue("versionOriginal"),
+        ai_image_prompt: "",
+        redirect_tool: getValue("redirectTool"),
+        publish_status: getValue("versionFinal") ? "ready" : "draft",
+        ai_prompt: $("mainPromptBox").textContent.trim(),
+        ai_long_copy: getValue("aiResult"),
+        output_storage: "",
+        video_url: "",
+        shorts_urls: "",
+        revised_copy: getValue("versionRevised"),
+        final_copy: getValue("versionFinal"),
+        version_log: `updated at ${nowIso()}`,
+        is_locked: "FALSE",
+        shorts_prompt: $("subPromptBox").textContent.trim(),
+        publish_fill_prompt: $("subPromptBox").textContent.trim()
+      };
+    }
+
+    function buildShortsPayload(){
+      return {
+        shorts_id: shortsId(),
+        video_id: videoId(),
+        shorts_type: "default",
+        version: "v1",
+        title: getValue("videoTopic"),
+        core_line: getValue("coreInsight"),
+        hook: "",
+        story: getValue("shortsResult"),
+        end: getValue("redirectTool"),
+        redirect_tool: getValue("redirectTool"),
+        status: "ready",
+        ai_prompt: $("subPromptBox").textContent.trim(),
+        output_storage: "",
+        revised_copy: "",
+        video_url: ""
+      };
+    }
+
+    function buildPublishPayload(){
+      return {
+        publish_id: publishId(),
+        content_id: contentId(),
+        video_id: videoId(),
+        platform: getValue("defaultPlatform"),
+        title: getValue("videoTopic") || getValue("storyTitle"),
+        full_text: getValue("versionFinal"),
+        short_text: getValue("publishResult"),
+        hashtags: keywordsFromText(`${getValue("topicGroup")} ${getValue("scenarioType")} ${getValue("mainTool")} ${getValue("subTool")}`),
+        cta: getValue("redirectTool") ? `延伸工具：${getValue("redirectTool")}` : "",
+        link: "",
+        status: getValue("versionFinal") ? "ready" : "draft",
+        video_url: "",
+        final_copy: getValue("versionFinal")
+      };
+    }
+
+    function buildToolIncubatorPayload(){
+      return {
+        idea_id: getValue("ideaId") || makeId("TI"),
+        name: getValue("toolName"),
+        scenario: getValue("scenarioType"),
+        main_tool: getValue("mainTool"),
+        sub_tool: getValue("subTool"),
+        topic_group: getValue("topicGroup"),
+        type: getValue("toolType"),
+        priority: "",
+        status: "draft",
+        source_content: contentId(),
+        source_story: getValue("storyId"),
+        demand: getValue("toolDemand"),
+        validated: "FALSE",
+        note: getValue("toolNote")
+      };
+    }
+
+    function buildToolLibraryPayload(){
+      return {
+        tool_code: getValue("mainTool") || getValue("toolName") || makeId("TL"),
+        name: getValue("toolName"),
+        type: getValue("toolType"),
+        function: getValue("toolDemand"),
+        scene: getValue("scenarioType"),
+        url: getValue("toolUrl"),
+        status: "ready",
+        note: getValue("toolNote")
+      };
+    }
+
+    async function appendRow(sheet, data){
+      return callGAS("appendRow", { sheet, data }, "POST");
+    }
+
+    async function saveStory(){
+      buildIdsIfNeeded();
+      const payload = buildStoryPayload();
+      await appendRow("stories_db", payload);
+      setSheetStatus("stories_db", `已寫入｜id: ${payload.id}`, true);
+      toast("01 故事庫已回填");
+    }
+
+    async function saveContentIndex(){
+      const payload = buildContentIndexPayload();
+      await appendRow("content_index", payload);
+      setSheetStatus("content_index", `已寫入｜content_id: ${payload.content_id}`, true);
+      toast("02 內容索引已回填");
+    }
+
+    async function saveAiTopics(){
+      const payload = buildAiTopicsPayload();
+      await appendRow("ai_topics", payload);
+      setSheetStatus("ai_topics", `已寫入｜topic_id: ${payload.topic_id}`, true);
+      toast("04 AI選題已回填");
+    }
+
+    async function saveWeeklyPlan(){
+      const payload = buildWeeklyPlanPayload();
+      await appendRow("weekly_plan", payload);
+      toast("05 排程已回填");
+    }
+
+    async function saveVideoGeneration(){
+      const payload = buildVideoGenerationPayload();
+      await appendRow("video_generation", payload);
+      setSheetStatus("video_generation", `已寫入｜video_id: ${payload.video_id}`, true);
+      toast("06 影片生成已回填");
+    }
+
+    async function saveShortsGeneration(){
+      const payload = buildShortsPayload();
+      await appendRow("shorts_generation", payload);
+      toast("07 Shorts 已回填");
+    }
+
+    async function savePublishContent(){
+      if (!getValue("versionFinal")) throw new Error("final_copy 為空，禁止發佈");
+      const payload = buildPublishPayload();
+      await appendRow("publish_content", payload);
+      setSheetStatus("publish_content", `已寫入｜publish_id: ${payload.publish_id}`, true);
+      toast("08 發佈內容已回填");
+    }
+
+    async function saveToolIncubator(){
+      const payload = buildToolIncubatorPayload();
+      await appendRow("tool_incubator", payload);
+      toast("11 工具孵化池已回填");
+    }
+
+    async function saveToolLibrary(){
+      const payload = buildToolLibraryPayload();
+      await appendRow("tool_library", payload);
+      toast("10 工具庫已回填");
+    }
+
+    async function autoFillCore(){
+      const problems = validateCore();
+      if (problems.length){
+        toast(`請先補齊：${problems.join(" / ")}`);
+        return;
+      }
+      buildIdsIfNeeded();
+      saveDraft();
+
+      try{
+        await saveStory();
+        await saveContentIndex();
+        await saveAiTopics();
+        await saveVideoGeneration();
+        if (getValue("versionFinal")) {
+          await savePublishContent();
+        } else {
+          setSheetStatus("publish_content", "略過｜final_copy 為空", false);
+        }
+        toast("核心閉環回填完成");
+      }catch(err){
+        toast(`回填失敗：${err.message}`);
+      }
+    }
+
+    async function publishNow(){
+      const problems = validatePublishReady();
+      if (problems.length){
+        toast(`禁止發佈：${problems.join(" / ")}`);
+        return;
+      }
+      try{
+        await savePublishContent();
+        toast("已發佈並寫入 08 發佈內容");
+      }catch(err){
+        toast(`發佈失敗：${err.message}`);
+      }
+    }
+
+    function bindPromptButtons(){
+      document.querySelectorAll("[data-prompt]").forEach(btn => {
+        btn.addEventListener("click", () => loadPrompt(btn.dataset.prompt));
+      });
+      document.querySelectorAll("[data-copy-source]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const id = btn.dataset.copySource;
+          copyText($(id)?.textContent || "");
+        });
+      });
+    }
+
+    function bindActions(){
+      $("btnPing").addEventListener("click", pingGAS);
+      $("btnInitHeaders").addEventListener("click", initHeaders);
+      $("btnSaveDraft").addEventListener("click", saveDraft);
+      $("btnLoadDraft").addEventListener("click", loadDraft);
+      $("btnExportJson").addEventListener("click", exportJson);
+      $("btnClearAll").addEventListener("click", clearAll);
+
+      $("btnGenerateIds").addEventListener("click", buildIdsIfNeeded);
+      $("btnValidate").addEventListener("click", () => {
+        const problems = validateCore();
+        toast(problems.length ? `請補齊：${problems.join(" / ")}` : "核心欄位已齊");
+      });
+
+      $("btnUseAiToOriginal").addEventListener("click", () => {
+        setValue("versionOriginal", getValue("aiResult"));
+        toast("已帶入 original");
+      });
+      $("btnOriginalToRevised").addEventListener("click", () => {
+        setValue("versionRevised", getValue("versionOriginal"));
+        updatePublishState();
+        toast("已帶入 revised");
+      });
+      $("btnRevisedToFinal").addEventListener("click", () => {
+        setValue("versionFinal", getValue("versionRevised"));
+        updatePublishState();
+        toast("已帶入 final");
+      });
+
+      $("btnSaveStory").addEventListener("click", async () => {
+        try{ await saveStory(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveContentIndex").addEventListener("click", async () => {
+        try{ await saveContentIndex(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveAiTopics").addEventListener("click", async () => {
+        try{ await saveAiTopics(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveWeeklyPlan").addEventListener("click", async () => {
+        try{ await saveWeeklyPlan(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveVideoGeneration").addEventListener("click", async () => {
+        try{ await saveVideoGeneration(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveShortsGeneration").addEventListener("click", async () => {
+        try{ await saveShortsGeneration(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSavePublishContent").addEventListener("click", async () => {
+        try{ await savePublishContent(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveToolIncubator").addEventListener("click", async () => {
+        try{ await saveToolIncubator(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+      $("btnSaveToolLibrary").addEventListener("click", async () => {
+        try{ await saveToolLibrary(); } catch(err){ toast(`失敗：${err.message}`); }
+      });
+
+      $("btnAutoFillCore").addEventListener("click", autoFillCore);
+      $("btnPublish").addEventListener("click", publishNow);
+
+      ["versionFinal","versionRevised","versionOriginal","storyRaw","videoTopic","aiResult","publishResult"].forEach(id => {
+        $(id).addEventListener("input", () => {
+          saveDraft();
+          updatePublishState();
+        });
+      });
+    }
+
+    function initDefaults(){
+      if (!getValue("shortsCount")) setValue("shortsCount", "7");
+      updatePublishState();
+    }
+
+    bindPromptButtons();
+    bindActions();
+    initDefaults();
+  </script>
 </body>
 </html>
