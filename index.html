@@ -1,845 +1,1046 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>幸福內容工廠 v1.1 一鍵生成版</title>
-<style>
-:root{
-  --bg:#fffaf5;
-  --card:#ffffff;
-  --card-soft:#fff7ef;
-  --primary:#f0a04b;
-  --primary-dark:#dd8d37;
-  --secondary:#8fc8a9;
-  --text:#3b2f2a;
-  --sub:#8b6f5a;
-  --line:#f1dfcb;
-  --danger:#d45b52;
-  --ok:#2f9e6f;
-  --shadow:0 10px 30px rgba(80,52,24,.08);
-  --radius:20px;
-}
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  padding:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
-}
-body{padding-bottom:100px}
-.wrap{
-  max-width:980px;
-  margin:0 auto;
-  padding:18px;
-}
-.hero{
-  background:linear-gradient(135deg,#fff1df,#fffaf5);
-  border:1px solid var(--line);
-  border-radius:28px;
-  padding:20px;
-  margin-bottom:18px;
-  box-shadow:var(--shadow);
-}
-.hero h1{
-  margin:0;
-  font-size:32px;
-}
-.hero p{
-  margin:8px 0 0;
-  color:var(--sub);
-  line-height:1.6;
-}
-.card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:18px;
-  margin-bottom:18px;
-  box-shadow:var(--shadow);
-}
-.section-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:14px;
-}
-.section-title h2{
-  margin:0;
-  font-size:22px;
-}
-.sub{
-  color:var(--sub);
-  font-size:13px;
-}
-.grid{
-  display:grid;
-  gap:12px;
-}
-.grid-2{grid-template-columns:1fr 1fr}
-.grid-3{grid-template-columns:repeat(3,1fr)}
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-label{
-  font-size:13px;
-  font-weight:700;
-  color:var(--sub);
-}
-input,textarea,select{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 14px;
-  background:#fff;
-  color:var(--text);
-  font-size:14px;
-  outline:none;
-}
-input:focus,textarea:focus,select:focus{
-  border-color:#f0a04b;
-  box-shadow:0 0 0 4px rgba(240,160,75,.12);
-}
-textarea{
-  min-height:110px;
-  resize:vertical;
-  line-height:1.6;
-}
-textarea.tall{min-height:180px}
-textarea.xl{min-height:240px}
-.btn-row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-button{
-  border:0;
-  border-radius:14px;
-  padding:12px 16px;
-  background:var(--primary);
-  color:#fff;
-  font-weight:800;
-  font-size:14px;
-  cursor:pointer;
-}
-button:hover{background:var(--primary-dark)}
-button.secondary{
-  background:#fff1df;
-  color:#a15a12;
-}
-button.ghost{
-  background:#f7f3ee;
-  color:#5e4b3f;
-}
-button.green{
-  background:var(--secondary);
-}
-button.danger{
-  background:var(--danger);
-}
-button[disabled]{
-  opacity:.55;
-  cursor:not-allowed;
-}
-.note{
-  background:var(--card-soft);
-  border:1px dashed #efd2b2;
-  border-radius:16px;
-  padding:12px;
-  color:#7c614d;
-  line-height:1.6;
-  font-size:13px;
-}
-.status{
-  font-size:13px;
-  color:var(--sub);
-  margin-top:10px;
-  line-height:1.6;
-}
-.footer-bar{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(255,250,245,.96);
-  backdrop-filter:blur(10px);
-  border-top:1px solid var(--line);
-  padding:12px 18px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.footer-status{
-  font-size:14px;
-  font-weight:800;
-  color:var(--sub);
-}
-.footer-actions{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-}
-.badge{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:999px;
-  background:#fff1df;
-  color:#9b5a19;
-  font-size:12px;
-  font-weight:800;
-}
-@media (max-width:900px){
-  .grid-2,.grid-3{grid-template-columns:1fr}
-  .hero h1{font-size:28px}
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI 自動化影音工廠 PWA v1.6</title>
+  <style>
+    :root{
+      --bg:#f7f3eb;
+      --panel:#fffdf8;
+      --card:#ffffff;
+      --line:#e7dccd;
+      --text:#3d352d;
+      --muted:#7f7468;
+      --accent:#b97a3d;
+      --accent2:#7ea37a;
+      --danger:#b85b5b;
+      --shadow:0 10px 24px rgba(88,67,44,.08);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;
+      background:linear-gradient(180deg,#fbf7ef 0%,#f5efe5 100%);
+      color:var(--text);
+    }
+    button,input,textarea,select{font:inherit}
+    .app{max-width:1600px;margin:0 auto;padding:18px}
+    .topbar{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:16px}
+    .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+    .title{font-size:28px;font-weight:800;margin:0 0 8px}
+    .sub{color:var(--muted);line-height:1.65;margin:0}
+    .settings-grid{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center}
+    .input,.textarea,.select{
+      width:100%;border:1px solid #d8ccb9;border-radius:14px;padding:11px 12px;background:#fff;color:var(--text);outline:none;
+    }
+    .textarea{min-height:150px;resize:vertical;line-height:1.7}
+    .btn{
+      border:0;border-radius:14px;padding:11px 14px;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;
+      transition:transform .15s ease,opacity .15s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{background:#8d7c68}
+    .btn.soft{background:#ece2d4;color:var(--text)}
+    .btn.green{background:var(--accent2)}
+    .btn.danger{background:var(--danger)}
+    .btn.small{padding:8px 11px;font-size:13px;border-radius:12px}
+    .status{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-top:10px;flex-wrap:wrap}
+    .dot{width:10px;height:10px;border-radius:50%;background:#d8c8b3}
+    .dot.ok{background:#6ea86f}.dot.bad{background:#d06c6c}
+    .main-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
+    .tab-btn{
+      border:1px solid var(--line);background:#f5ecdf;color:var(--text);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700;
+    }
+    .tab-btn.active{background:var(--accent);color:#fff;border-color:transparent}
+    .section{display:none}.section.active{display:block}
+    .db-layout{display:grid;grid-template-columns:230px minmax(0,1fr) 380px;gap:14px}
+    .side-menu{display:flex;flex-direction:column;gap:8px}
+    .side-btn{
+      text-align:left;border:1px solid var(--line);background:#fff;padding:12px 14px;border-radius:16px;cursor:pointer;font-weight:700;color:var(--text);
+    }
+    .side-btn.active{background:#f2e4d2;border-color:#d8b58f}
+    .toolbar{display:grid;grid-template-columns:1fr auto auto;gap:10px;margin-bottom:12px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;align-content:start;max-height:72vh;overflow:auto;padding-right:4px}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 18px rgba(107,80,49,.06)}
+    .card h4{margin:0;font-size:17px;line-height:1.5}
+    .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;background:#f4ece0;border-radius:999px;font-size:12px;color:#6a5c4d}
+    .card p{margin:0;color:#5b5147;line-height:1.65;font-size:14px;white-space:pre-wrap}
+    .right-stack{display:flex;flex-direction:column;gap:12px;max-height:82vh;overflow:auto;padding-right:4px}
+    .selection-box h3,.prompt-box h3,.mini-box h3{margin:0 0 10px;font-size:17px}
+    .selection-item{border:1px dashed #d7c5af;border-radius:14px;padding:10px 12px;margin-bottom:10px;background:#fffdfb}
+    .selection-item strong{display:block;margin-bottom:6px}
+    .small-text{font-size:13px;color:var(--muted);line-height:1.55}
+    .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+    .prompt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .prompt-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
+    .prompt-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .split-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .plan-layout,.course-layout{display:grid;grid-template-columns:1.2fr .9fr;gap:14px}
+    .table-wrap{max-height:72vh;overflow:auto;border:1px solid var(--line);border-radius:18px;background:#fff}
+    table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
+    th,td{border-bottom:1px solid #eee3d4;padding:10px;text-align:left;vertical-align:top}
+    th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
+    .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .form-grid .full{grid-column:1/-1}
+    .empty{color:var(--muted);font-size:14px;padding:16px;text-align:center;border:1px dashed var(--line);border-radius:16px;background:#fffdfb}
+    .inline-note{font-size:12px;color:var(--muted)}
+    @media (max-width:1200px){
+      .db-layout,.plan-layout,.course-layout,.topbar,.prompt-grid,.split-2{grid-template-columns:1fr}
+      .cards,.right-stack{max-height:none}
+    }
+    @media (max-width:760px){
+      .settings-grid,.toolbar,.form-grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
+  <div class="app">
+    <div class="topbar">
+      <div class="panel">
+        <h1 class="title">AI 自動化影音工廠 PWA v1.6</h1>
+        <p class="sub">接新版 GAS 的完整工作台。可做資料庫選題、匹配、工具推薦、生成指令與回填指令雙一鍵複製、12 週規劃與課程草稿寫回。</p>
+      </div>
+      <div class="panel">
+        <div class="settings-grid">
+          <input id="gasUrl" class="input" />
+          <button class="btn" id="saveGasBtn">儲存</button>
+          <button class="btn secondary" id="testGasBtn">測試</button>
+          <button class="btn soft" id="reloadAllBtn">重載資料</button>
+        </div>
+        <div class="status">
+          <span class="dot" id="gasStatusDot"></span>
+          <span id="gasStatusText">尚未連線</span>
+        </div>
+      </div>
+    </div>
 
-  <div class="hero">
-    <span class="badge">一鍵生成版</span>
-    <h1>幸福內容工廠</h1>
-    <p>從故事出發，快速整理出長片骨架、發佈文案與可回填資料。這版是可直接操作、可直接寫入 GAS 的暖色實作版。</p>
+    <div class="main-tabs">
+      <button class="tab-btn active" data-tab="database">資料庫匹配中心</button>
+      <button class="tab-btn" data-tab="prompts">AI 指令中心</button>
+      <button class="tab-btn" data-tab="weekly">12 週內容規劃</button>
+      <button class="tab-btn" data-tab="courses">課程開發區</button>
+    </div>
+
+    <section class="section active" id="databaseSection">
+      <div class="db-layout">
+        <div class="panel"><div class="side-menu" id="dbMenu"></div></div>
+
+        <div class="panel">
+          <div class="toolbar">
+            <input id="searchInput" class="input" placeholder="搜尋標題 / 摘要 / 標籤 / 內容..." />
+            <button class="btn soft" id="refreshCurrentBtn">重整目前分頁</button>
+            <button class="btn green" id="saveMatchBtn">存匹配結果</button>
+          </div>
+          <div class="cards" id="cardsContainer"></div>
+        </div>
+
+        <div class="right-stack">
+          <div class="panel selection-box">
+            <h3>已選匹配</h3>
+            <div id="selectedBox"></div>
+            <div class="actions-row">
+              <button class="btn soft small" id="clearSelectionBtn">清空選擇</button>
+              <button class="btn green small" id="recommendToolsBtn">推薦工具</button>
+            </div>
+          </div>
+
+          <div class="panel mini-box">
+            <h3>故事原文補充區</h3>
+            <textarea id="storyFullText" class="textarea" placeholder="可在這裡補故事原文，會自動暫存到本機。"></textarea>
+            <div class="small-text">這一欄先走本機暫存，之後可再加回寫到表單或拉第一母庫原文。</div>
+          </div>
+
+          <div class="panel mini-box">
+            <h3>快速提示</h3>
+            <div class="small-text">
+              1. 先選故事。<br>
+              2. 再選一個解碼（情緒 / 人際 / 教養）。<br>
+              3. 補一則心靈感悟與工具。<br>
+              4. 到 AI 指令中心一鍵複製生成與回填指令。<br>
+              5. 需要時加入 12 週規劃或課程草稿。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="promptsSection">
+      <div class="prompt-grid" id="promptGrid"></div>
+    </section>
+
+    <section class="section" id="weeklySection">
+      <div class="plan-layout">
+        <div class="panel">
+          <h3 style="margin-top:0;">12 週規劃總覽</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>週次</th>
+                  <th>週主題</th>
+                  <th>週二心靈感悟</th>
+                  <th>週四心腦科學</th>
+                  <th>週六故事</th>
+                  <th>導流工具</th>
+                  <th>發布狀態</th>
+                </tr>
+              </thead>
+              <tbody id="weeklyTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-top:0;">把目前匹配加入週規劃</h3>
+          <div class="form-grid">
+            <input id="weekNo" class="input" placeholder="週次，例如 W01" />
+            <input id="weekTheme" class="input" placeholder="週主題" />
+            <input id="weekTuesday" class="input" placeholder="週二心靈感悟" />
+            <input id="weekThursday" class="input" placeholder="週四心腦科學" />
+            <input id="weekSaturday" class="input" placeholder="週六故事" />
+            <input id="weekTool" class="input" placeholder="導流工具" />
+            <input id="weekPriority" class="input" placeholder="影片優先順序" />
+            <input id="weekStatus" class="input" placeholder="發布狀態，預設未發布" />
+            <textarea id="weekLongVideo" class="textarea full" placeholder="長片腳本 / 備註（可先空白）"></textarea>
+            <textarea id="weekShorts" class="textarea full" placeholder="Shorts 生成 / 備註（可先空白）"></textarea>
+          </div>
+          <div class="actions-row">
+            <button class="btn green" id="fillWeeklyFromSelectionBtn">自動帶入目前匹配</button>
+            <button class="btn" id="saveWeeklyBtn">寫入週規劃</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="coursesSection">
+      <div class="course-layout">
+        <div class="panel">
+          <h3 style="margin-top:0;">課程資料庫</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>課程名稱</th>
+                  <th>類型</th>
+                  <th>狀態</th>
+                  <th>對象</th>
+                  <th>摘要</th>
+                </tr>
+              </thead>
+              <tbody id="courseTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h3 style="margin-top:0;">從目前匹配生成課程草稿</h3>
+          <div class="form-grid">
+            <input id="courseTitle" class="input full" placeholder="課程名稱" />
+            <input id="courseType" class="input" placeholder="課程類型，例如 12週課程 / 講座 / 工作坊" />
+            <input id="courseAudience" class="input" placeholder="適用對象" />
+            <input id="courseDuration" class="input" placeholder="總時長(分鐘)" />
+            <input id="courseCapacity" class="input" placeholder="人數上限" />
+            <input id="courseKind" class="input" placeholder="課程形式，例如 線上 / 實體 / 混合" />
+            <textarea id="courseSummary" class="textarea full" placeholder="課程摘要"></textarea>
+            <textarea id="courseObjectives" class="textarea full" placeholder="課程目標"></textarea>
+            <textarea id="courseOutline" class="textarea full" placeholder="課程大綱"></textarea>
+            <textarea id="courseMaterials" class="textarea full" placeholder="教材內容 / 來源素材"></textarea>
+            <textarea id="courseNotes" class="textarea full" placeholder="備註"></textarea>
+          </div>
+          <div class="actions-row">
+            <button class="btn green" id="fillCourseFromSelectionBtn">自動帶入目前匹配</button>
+            <button class="btn" id="saveCourseBtn">寫入課程資料庫</button>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <div class="card">
-    <div class="section-title">
-      <h2>系統設定</h2>
-      <div class="sub">先確認 GAS 已連線</div>
-    </div>
-    <div class="grid grid-2">
-      <div class="field">
-        <label for="gasUrl">GAS Web App URL</label>
-        <input id="gasUrl" value="https://script.google.com/macros/s/AKfycbxAKKRtJrhHllzrwfipcETbDwg3rkOLioj409-RTpJTsnNLYzvPARpvDzfFnLf-QRfNIA/exec">
-      </div>
-      <div class="field">
-        <label for="contentMode">生成模式</label>
-        <select id="contentMode">
-          <option value="sat">週六教養故事</option>
-          <option value="tue">週二心靈感悟</option>
-          <option value="thu">週四心腦科學</option>
-        </select>
-      </div>
-    </div>
-    <div class="btn-row" style="margin-top:12px;">
-      <button class="ghost" id="btnPing">測試連線</button>
-      <button class="ghost" id="btnLoadDraft">讀取草稿</button>
-      <button class="ghost" id="btnSaveDraft">儲存草稿</button>
-      <button class="danger" id="btnClear">清空</button>
-    </div>
-    <div class="status" id="systemStatus">尚未測試</div>
-  </div>
-
-  <div class="card">
-    <div class="section-title">
-      <h2>① 輸入故事</h2>
-      <div class="sub">把原始素材放進來</div>
-    </div>
-
-    <div class="grid grid-3">
-      <div class="field">
-        <label for="storyId">story_id</label>
-        <input id="storyId" placeholder="可留空，自動產生">
-      </div>
-      <div class="field">
-        <label for="storyTitle">故事標題</label>
-        <input id="storyTitle" placeholder="例如：孩子一哭，我差點也跟著炸掉">
-      </div>
-      <div class="field">
-        <label for="topicGroup">主題分類</label>
-        <input id="topicGroup" placeholder="例如：幸福教養 / 情緒安定">
-      </div>
-    </div>
-
-    <div class="grid grid-2" style="margin-top:12px;">
-      <div class="field">
-        <label for="storyRaw">故事全文</label>
-        <textarea id="storyRaw" class="xl" placeholder="貼上你的故事、感悟、逐字稿"></textarea>
-      </div>
-      <div class="field">
-        <label for="redirectTool">導流工具</label>
-        <input id="redirectTool" placeholder="例如：情緒急救30秒">
-        <label for="scenarioType">情境</label>
-        <input id="scenarioType" placeholder="例如：孩子崩潰 / 親子衝突">
-        <label for="mainTool">主工具</label>
-        <input id="mainTool" placeholder="例如：情緒急救卡">
-        <label for="subTool">子工具</label>
-        <input id="subTool" placeholder="例如：安定對話句">
-        <label for="publishDate">日期</label>
-        <input id="publishDate" type="date">
-      </div>
-    </div>
-
-    <div class="btn-row" style="margin-top:12px;">
-      <button id="btnAutoGenerate">一鍵生成今日內容</button>
-      <button class="secondary" id="btnGenerateSummary">只重整摘要</button>
-      <button class="secondary" id="btnGenerateVideo">只生長片</button>
-      <button class="secondary" id="btnGeneratePublish">只生發佈文案</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-title">
-      <h2>② 自動生成結果</h2>
-      <div class="sub">可再手動微調</div>
-    </div>
-
-    <div class="grid grid-3">
-      <div class="field">
-        <label for="corePain">核心痛點</label>
-        <textarea id="corePain"></textarea>
-      </div>
-      <div class="field">
-        <label for="coreTurn">關鍵轉折</label>
-        <textarea id="coreTurn"></textarea>
-      </div>
-      <div class="field">
-        <label for="coreInsight">核心洞見</label>
-        <textarea id="coreInsight"></textarea>
-      </div>
-    </div>
-
-    <div class="grid grid-2" style="margin-top:12px;">
-      <div class="field">
-        <label for="videoTopic">長片主題</label>
-        <input id="videoTopic" placeholder="自動生成後可修改">
-      </div>
-      <div class="field">
-        <label for="publishTitle">發佈標題</label>
-        <input id="publishTitle" placeholder="自動生成後可修改">
-      </div>
-    </div>
-
-    <div class="grid grid-3" style="margin-top:12px;">
-      <div class="field">
-        <label for="versionOriginal">original</label>
-        <textarea id="versionOriginal" class="tall"></textarea>
-      </div>
-      <div class="field">
-        <label for="versionRevised">revised</label>
-        <textarea id="versionRevised" class="tall"></textarea>
-      </div>
-      <div class="field">
-        <label for="versionFinal">final_copy</label>
-        <textarea id="versionFinal" class="tall" placeholder="最終定稿，空白就不能發佈"></textarea>
-      </div>
-    </div>
-
-    <div class="btn-row" style="margin-top:12px;">
-      <button class="ghost" id="btnOriginalToRevised">original → revised</button>
-      <button class="ghost" id="btnRevisedToFinal">revised → final</button>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-title">
-      <h2>③ Publish Factory</h2>
-      <div class="sub">生成發佈標題、文案、Hashtags</div>
-    </div>
-
-    <div class="grid grid-2">
-      <div class="field">
-        <label for="publishShort">短文案</label>
-        <textarea id="publishShort" class="tall"></textarea>
-      </div>
-      <div class="field">
-        <label for="hashtags">Hashtags</label>
-        <textarea id="hashtags" class="tall"></textarea>
-      </div>
-    </div>
-
-    <div class="field" style="margin-top:12px;">
-      <label for="publishCTA">CTA</label>
-      <textarea id="publishCTA"></textarea>
-    </div>
-
-    <div class="note" style="margin-top:12px;">
-      這版的「一鍵生成」是本地規則生成，目的是先讓你的流程跑起來、先有可編修的成品骨架。之後再把 NotebookLM 或 AI 協作指令真正接進來。
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="section-title">
-      <h2>④ 一鍵回填</h2>
-      <div class="sub">寫入資料庫</div>
-    </div>
-    <div class="btn-row">
-      <button class="green" id="btnSaveStory">寫入 stories_db</button>
-      <button class="green" id="btnSaveVideo">寫入 video_generation</button>
-      <button class="green" id="btnSavePublish">發佈到 publish_content</button>
-      <button id="btnSaveAll">一鍵寫入三表</button>
-    </div>
-    <div class="status" id="writeStatus">尚未寫入</div>
-  </div>
-
-</div>
-
-<div class="footer-bar">
-  <div class="footer-status" id="footerStatus">請先輸入故事，再按一鍵生成</div>
-  <div class="footer-actions">
-    <button class="secondary" id="btnPreviewFlow">檢查內容</button>
-    <button id="btnFinalPublish">正式發佈</button>
-  </div>
-</div>
-
-<script>
-const STORAGE_KEY = "happy_content_factory_v11";
-
-const $ = (id) => document.getElementById(id);
-
-function val(id){
-  return ($(id)?.value || "").trim();
-}
-
-function setVal(id, value){
-  if ($(id)) $(id).value = value || "";
-}
-
-function nowDate(){
-  return new Date().toISOString().slice(0,10);
-}
-
-function makeId(prefix){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const da = String(d.getDate()).padStart(2,"0");
-  const h = String(d.getHours()).padStart(2,"0");
-  const mi = String(d.getMinutes()).padStart(2,"0");
-  const s = String(d.getSeconds()).padStart(2,"0");
-  const ms = String(d.getMilliseconds()).padStart(3,"0");
-  return `${prefix}${y}${m}${da}${h}${mi}${s}${ms}`;
-}
-
-function ensureBaseDefaults(){
-  if(!val("storyId")) setVal("storyId", makeId("S"));
-  if(!val("publishDate")) setVal("publishDate", nowDate());
-}
-
-function saveDraft(){
-  const ids = [
-    "gasUrl","contentMode","storyId","storyTitle","topicGroup","storyRaw",
-    "redirectTool","scenarioType","mainTool","subTool","publishDate",
-    "corePain","coreTurn","coreInsight","videoTopic","publishTitle",
-    "versionOriginal","versionRevised","versionFinal","publishShort",
-    "hashtags","publishCTA"
-  ];
-  const data = {};
-  ids.forEach(id => data[id] = val(id));
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  setStatus("systemStatus", "草稿已儲存");
-}
-
-function loadDraft(){
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if(!raw){
-    setStatus("systemStatus", "目前沒有草稿");
-    return;
-  }
-  try{
-    const data = JSON.parse(raw);
-    Object.keys(data).forEach(k => setVal(k, data[k]));
-    updateFooter();
-    setStatus("systemStatus", "草稿已讀取");
-  }catch(err){
-    setStatus("systemStatus", "草稿讀取失敗");
-  }
-}
-
-function clearAll(){
-  [
-    "storyId","storyTitle","topicGroup","storyRaw","redirectTool","scenarioType","mainTool","subTool",
-    "publishDate","corePain","coreTurn","coreInsight","videoTopic","publishTitle",
-    "versionOriginal","versionRevised","versionFinal","publishShort","hashtags","publishCTA"
-  ].forEach(id => setVal(id,""));
-  ensureBaseDefaults();
-  updateFooter();
-  setStatus("systemStatus", "已清空");
-  setStatus("writeStatus", "尚未寫入");
-}
-
-function setStatus(id, text){
-  $(id).textContent = text;
-}
-
-async function callGAS(action, payload = {}, method = "POST"){
-  const gasUrl = val("gasUrl");
-  if(!gasUrl) throw new Error("請先填寫 GAS URL");
-
-  if(method === "GET"){
-    const url = new URL(gasUrl);
-    url.searchParams.set("action", action);
-    Object.entries(payload).forEach(([k,v])=>{
-      if(v !== undefined && v !== null && v !== "") url.searchParams.set(k, String(v));
-    });
-    const res = await fetch(url.toString());
-    const text = await res.text();
-    return JSON.parse(text);
-  }
-
-  const res = await fetch(gasUrl, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({ action, ...payload })
-  });
-  const text = await res.text();
-  return JSON.parse(text);
-}
-
-async function ping(){
-  try{
-    const res = await callGAS("ping", {}, "GET");
-    setStatus("systemStatus", res.ok ? `✅ 連線成功｜${res.version}` : "❌ 連線失敗");
-  }catch(err){
-    setStatus("systemStatus", `❌ 連線失敗｜${err.message}`);
-  }
-}
-
-function splitSentences(text){
-  return String(text || "")
-    .replace(/\n+/g, " ")
-    .split(/[。！？!?]/)
-    .map(s => s.trim())
-    .filter(Boolean);
-}
-
-function firstLine(text){
-  const lines = String(text || "").split("\n").map(s => s.trim()).filter(Boolean);
-  return lines[0] || "";
-}
-
-function summarizeStory(raw){
-  const parts = splitSentences(raw);
-  const first = parts[0] || raw.slice(0,30);
-  const second = parts[1] || "我原本以為要先處理問題，後來才發現要先穩住自己。";
-  const third = parts[2] || "當我慢下來，關係也開始鬆動。";
-
-  return {
-    pain: `${first}，背後真正困難的不是表面事件，而是當下情緒一下子被拉高。`,
-    turn: `${second}，轉折點不是孩子立刻改變，而是大人先停下來、先穩住。`,
-    insight: `${third}，很多時候關係能變好，不是因為更會說，而是先不被情緒帶走。`
-  };
-}
-
-function generateVideoTopic(mode, title, insight){
-  if(mode === "sat") return title || `當孩子情緒來時，大人怎麼先穩住自己`;
-  if(mode === "tue") return title || `你不是太脆弱，你只是撐太久了`;
-  return title || `情緒一來時，大腦和身體其實發生了什麼`;
-}
-
-function generateOriginal(mode, title, raw, pain, turn, insight, tool){
-  const opening = mode === "sat"
-    ? `【開頭】\n有時候最難的，不是孩子哭，而是孩子一哭，我心裡也跟著亂了。`
-    : mode === "tue"
-    ? `【開頭】\n你以為自己是太脆弱，其實你只是撐太久了。`
-    : `【開頭】\n當情緒突然上來時，你不是故意失控，而是整個系統正在自動保護你。`;
-
-  const scene = `\n\n【情境】\n${firstLine(raw) || raw}`;
-  const painBlock = `\n\n【痛點】\n${pain}`;
-  const turnBlock = `\n\n【轉折】\n${turn}`;
-  const insightBlock = `\n\n【洞見】\n${insight}`;
-  const toolBlock = tool ? `\n\n【導流】\n這時候，不一定要立刻講很多話，先用「${tool}」把自己安定下來。` : "";
-
-  return `${opening}${scene}${painBlock}${turnBlock}${insightBlock}${toolBlock}`;
-}
-
-function generatePublish(title, insight, tool, mode){
-  const short = mode === "sat"
-    ? `孩子的情緒來得快，大人的心更容易一起被捲進去。這支內容想陪你練習一件事：先穩住自己，再陪孩子走過去。`
-    : mode === "tue"
-    ? `你不是不好，你只是太久沒有被好好接住。當你願意慢下來，很多卡住的情緒就開始鬆了。`
-    : `情緒來時，不只是「想太多」，很多時候是身體和大腦一起進入保護模式。懂了，就比較不會一直怪自己。`;
-
-  const cta = tool
-    ? `想把今天這份安定帶進生活裡，可以先從「${tool}」開始。`
-    : `如果你也正在練習把自己安定下來，這支內容想陪你一起走。`;
-
-  const tags = mode === "sat"
-    ? "#幸福教養 #親子溝通 #情緒教養 #大人先穩定"
-    : mode === "tue"
-    ? "#心靈感悟 #情緒陪伴 #自我安定 #溫柔練習"
-    : "#心腦科學 #情緒調節 #神經系統 #理解自己";
-
-  return {
-    publishTitle: title,
-    publishShort: `${short}\n\n${insight}`,
-    hashtags: tags,
-    cta
-  };
-}
-
-function autoGenerateAll(){
-  ensureBaseDefaults();
-
-  const raw = val("storyRaw");
-  const title = val("storyTitle");
-  const mode = val("contentMode");
-  const tool = val("redirectTool");
-
-  if(!raw){
-    updateFooter("請先貼入故事內容");
-    return;
-  }
-
-  const summary = summarizeStory(raw);
-  setVal("corePain", summary.pain);
-  setVal("coreTurn", summary.turn);
-  setVal("coreInsight", summary.insight);
-
-  const topic = generateVideoTopic(mode, title, summary.insight);
-  setVal("videoTopic", topic);
-  setVal("publishTitle", topic);
-
-  const original = generateOriginal(mode, topic, raw, summary.pain, summary.turn, summary.insight, tool);
-  setVal("versionOriginal", original);
-
-  if(!val("versionRevised")) setVal("versionRevised", original);
-
-  const pub = generatePublish(topic, summary.insight, tool, mode);
-  setVal("publishTitle", pub.publishTitle);
-  setVal("publishShort", pub.publishShort);
-  setVal("hashtags", pub.hashtags);
-  setVal("publishCTA", pub.cta);
-
-  updateFooter("已完成一鍵生成，請檢查後再定稿");
-  saveDraft();
-}
-
-function generateSummaryOnly(){
-  const raw = val("storyRaw");
-  if(!raw){
-    updateFooter("請先貼入故事內容");
-    return;
-  }
-  const summary = summarizeStory(raw);
-  setVal("corePain", summary.pain);
-  setVal("coreTurn", summary.turn);
-  setVal("coreInsight", summary.insight);
-  updateFooter("已重整摘要");
-}
-
-function generateVideoOnly(){
-  const mode = val("contentMode");
-  const topic = generateVideoTopic(mode, val("storyTitle"), val("coreInsight"));
-  setVal("videoTopic", topic);
-  setVal("publishTitle", topic);
-  setVal("versionOriginal", generateOriginal(
-    mode, topic, val("storyRaw"), val("corePain"), val("coreTurn"), val("coreInsight"), val("redirectTool")
-  ));
-  updateFooter("已生成長片骨架");
-}
-
-function generatePublishOnly(){
-  const topic = val("videoTopic") || val("storyTitle");
-  const pub = generatePublish(topic, val("coreInsight"), val("redirectTool"), val("contentMode"));
-  setVal("publishTitle", pub.publishTitle);
-  setVal("publishShort", pub.publishShort);
-  setVal("hashtags", pub.hashtags);
-  setVal("publishCTA", pub.cta);
-  updateFooter("已生成發佈文案");
-}
-
-function moveOriginalToRevised(){
-  setVal("versionRevised", val("versionOriginal"));
-  updateFooter("已帶入 revised");
-}
-
-function moveRevisedToFinal(){
-  setVal("versionFinal", val("versionRevised"));
-  updateFooter();
-}
-
-function updateFooter(custom){
-  if(custom){
-    $("footerStatus").textContent = custom;
-    return;
-  }
-  $("footerStatus").textContent = val("versionFinal")
-    ? "可發佈｜final_copy 已完成"
-    : "尚未發佈｜請先完成 final_copy";
-  $("btnFinalPublish").disabled = !val("versionFinal");
-}
-
-function buildStoryPayload(){
-  return {
-    id: val("storyId") || makeId("S"),
-    content_type: "story",
-    title: val("storyTitle"),
-    story_content: val("storyRaw"),
-    core_summary: [val("corePain"), val("coreTurn"), val("coreInsight")].filter(Boolean).join("\n"),
-    core_pain: val("corePain"),
-    core_insight: val("coreInsight"),
-    keywords: `${val("topicGroup")}, ${val("scenarioType")}`.trim(),
-    main_theme: val("topicGroup"),
-    brain_tag: val("contentMode") === "thu" ? "TRUE" : "FALSE",
-    tool_potential: val("mainTool") ? "TRUE" : "FALSE",
-    publish_status: val("versionFinal") ? "ready" : "draft",
-    main_tool: val("mainTool"),
-    sub_tool: val("subTool"),
-    ext_tool: val("redirectTool"),
-    priority: "",
-    topic_group: val("topicGroup"),
-    topic_tags: "",
-    scenario_type: val("scenarioType"),
-    shorts_potential: "7",
-    publish_date: val("publishDate"),
-    video_url: "",
-    story_remaining: "",
-    story_alert: "",
-    brain_stock: "",
-    insight_stock: "",
-    shorts_stock: "",
-    channel_stock: "",
-    viral_short: "",
-    shorts_topic: "",
-    shorts_script: "",
-    shorts_hook: "",
-    video_priority: "",
-    today_task: "",
-    weekly_schedule: "",
-    date: val("publishDate"),
-    video_theme: val("videoTopic")
-  };
-}
-
-function buildVideoPayload(){
-  return {
-    video_id: makeId("VD"),
-    week_no: "",
-    video_type: "long",
-    content_id: `CT-${val("storyId")}`,
-    story_id: val("storyId"),
-    video_title: val("videoTopic"),
-    shorts_title: "",
-    core_message: val("coreInsight"),
-    script_outline: val("versionOriginal"),
-    ai_image_prompt: "",
-    redirect_tool: val("redirectTool"),
-    publish_status: val("versionFinal") ? "ready" : "draft",
-    ai_prompt: "",
-    ai_long_copy: "",
-    output_storage: "",
-    video_url: "",
-    shorts_urls: "",
-    revised_copy: val("versionRevised"),
-    final_copy: val("versionFinal"),
-    version_log: `updated ${new Date().toLocaleString()}`,
-    is_locked: "FALSE",
-    shorts_prompt: "",
-    publish_fill_prompt: ""
-  };
-}
-
-function buildPublishPayload(){
-  return {
-    publish_id: makeId("PB"),
-    content_id: `CT-${val("storyId")}`,
-    video_id: "",
-    platform: "youtube",
-    title: val("publishTitle") || val("videoTopic"),
-    full_text: val("versionFinal"),
-    short_text: val("publishShort"),
-    hashtags: val("hashtags"),
-    cta: val("publishCTA"),
-    link: "",
-    status: val("versionFinal") ? "ready" : "draft",
-    video_url: "",
-    final_copy: val("versionFinal")
-  };
-}
-
-async function appendRow(sheet, data){
-  const result = await callGAS("appendRow", { sheet, data }, "POST");
-  if(!result.ok) throw new Error(result.error || "寫入失敗");
-  return result;
-}
-
-async function saveStory(){
-  ensureBaseDefaults();
-  const result = await appendRow("stories_db", buildStoryPayload());
-  setStatus("writeStatus", `stories_db 寫入成功｜row ${result.row_number}`);
-  updateFooter("已寫入 stories_db");
-}
-
-async function saveVideo(){
-  ensureBaseDefaults();
-  const result = await appendRow("video_generation", buildVideoPayload());
-  setStatus("writeStatus", `video_generation 寫入成功｜row ${result.row_number}`);
-  updateFooter("已寫入 video_generation");
-}
-
-async function savePublish(){
-  ensureBaseDefaults();
-  if(!val("versionFinal")){
-    updateFooter("❌ final_copy 不能空白");
-    return;
-  }
-  const result = await appendRow("publish_content", buildPublishPayload());
-  setStatus("writeStatus", `publish_content 寫入成功｜row ${result.row_number}`);
-  updateFooter("已寫入 publish_content");
-}
-
-async function saveAll(){
-  try{
-    await saveStory();
-    await saveVideo();
-    if(val("versionFinal")) await savePublish();
-    else updateFooter("故事與長片已寫入；發佈略過，因為 final_copy 為空");
-  }catch(err){
-    updateFooter(`寫入失敗：${err.message}`);
-  }
-}
-
-function previewFlow(){
-  const missing = [];
-  if(!val("storyRaw")) missing.push("故事");
-  if(!val("corePain")) missing.push("核心痛點");
-  if(!val("videoTopic")) missing.push("長片主題");
-  if(!val("versionOriginal")) missing.push("original");
-  if(!val("versionFinal")) missing.push("final_copy");
-  updateFooter(missing.length ? `尚缺：${missing.join("、")}` : "內容已齊，可發佈");
-}
-
-function bind(){
-  $("btnPing").addEventListener("click", ping);
-  $("btnLoadDraft").addEventListener("click", loadDraft);
-  $("btnSaveDraft").addEventListener("click", saveDraft);
-  $("btnClear").addEventListener("click", clearAll);
-
-  $("btnAutoGenerate").addEventListener("click", autoGenerateAll);
-  $("btnGenerateSummary").addEventListener("click", generateSummaryOnly);
-  $("btnGenerateVideo").addEventListener("click", generateVideoOnly);
-  $("btnGeneratePublish").addEventListener("click", generatePublishOnly);
-
-  $("btnOriginalToRevised").addEventListener("click", moveOriginalToRevised);
-  $("btnRevisedToFinal").addEventListener("click", moveRevisedToFinal);
-
-  $("btnSaveStory").addEventListener("click", () => saveStory().catch(err => updateFooter(`寫入失敗：${err.message}`)));
-  $("btnSaveVideo").addEventListener("click", () => saveVideo().catch(err => updateFooter(`寫入失敗：${err.message}`)));
-  $("btnSavePublish").addEventListener("click", () => savePublish().catch(err => updateFooter(`寫入失敗：${err.message}`)));
-  $("btnSaveAll").addEventListener("click", saveAll);
-
-  $("btnPreviewFlow").addEventListener("click", previewFlow);
-  $("btnFinalPublish").addEventListener("click", () => savePublish().catch(err => updateFooter(`發佈失敗：${err.message}`)));
-
-  ["storyRaw","storyTitle","corePain","coreTurn","coreInsight","videoTopic","versionOriginal","versionRevised","versionFinal","publishShort","hashtags","publishCTA"]
-    .forEach(id => {
-      $(id).addEventListener("input", () => {
-        saveDraft();
-        updateFooter();
+  <script>
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz9fZoUvF_qQC_yTjcB31NlBED-8aMl_LnNZU54JZaR8HPDFQIouowF2tdX_8bXG_-a/exec";
+
+    const STORAGE_KEYS = {
+      gasUrl: 'ai_factory_gas_url_v1',
+      storyFullText: 'ai_factory_story_full_text_v1',
+      selected: 'ai_factory_selected_v1'
+    };
+
+    const DB_SOURCES = [
+      { key: 'stories', label: '故事庫', action: 'getStories', selectionKey: 'story' },
+      { key: 'emotion', label: '情緒解碼', action: 'getEmotion', selectionKey: 'decode' },
+      { key: 'relation', label: '人際解碼', action: 'getRelation', selectionKey: 'decode' },
+      { key: 'parenting', label: '教養解碼', action: 'getParenting', selectionKey: 'decode' },
+      { key: 'insight', label: '心靈感悟', action: 'getInsight', selectionKey: 'insight' },
+      { key: 'tools', label: '工具庫', action: 'getTools', selectionKey: 'tool' },
+      { key: 'scenarioToolMap', label: '工具匹配', action: 'getScenarioTool', selectionKey: 'scenarioToolMap' },
+      { key: 'scenarioPlan', label: '情境規劃', action: 'getScenarioPlan', selectionKey: 'scenarioPlan' }
+    ];
+
+    const TASKS = [
+      { key: 'task1', title: '任務一｜原料提取與主題串接', generate: buildTask1Prompt, refill: buildTask1Refill },
+      { key: 'task2', title: '任務二｜長影片腳本與 AI 繪圖提示詞', generate: buildTask2Prompt, refill: buildTask2Refill },
+      { key: 'task3', title: '任務三｜Shorts 矩陣生成', generate: buildTask3Prompt, refill: buildTask3Refill },
+      { key: 'task4', title: '任務四｜多平台發布內容與 CTA', generate: buildTask4Prompt, refill: buildTask4Refill },
+      { key: 'task5', title: '任務五｜課程規劃與講題開發', generate: buildTask5Prompt, refill: buildTask5Refill }
+    ];
+
+    const state = {
+      gasUrl: '',
+      connectionOk: false,
+      activeTab: 'database',
+      activeDbKey: 'stories',
+      datasets: {},
+      weekly: [],
+      courses: [],
+      selected: {
+        story: null,
+        decode: [],
+        insight: [],
+        tool: [],
+        scenarioToolMap: [],
+        scenarioPlan: []
+      }
+    };
+
+    const el = {};
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+      cacheElements();
+      bindEvents();
+      renderDbMenu();
+      restoreLocalState();
+      renderPromptBoxes();
+      updateSelectedBox();
+      renderCurrentCards();
+      if (state.gasUrl) testAndLoad();
+    }
+
+    function cacheElements() {
+      el.gasUrl = document.getElementById('gasUrl');
+      el.gasStatusDot = document.getElementById('gasStatusDot');
+      el.gasStatusText = document.getElementById('gasStatusText');
+      el.dbMenu = document.getElementById('dbMenu');
+      el.cardsContainer = document.getElementById('cardsContainer');
+      el.searchInput = document.getElementById('searchInput');
+      el.selectedBox = document.getElementById('selectedBox');
+      el.storyFullText = document.getElementById('storyFullText');
+      el.promptGrid = document.getElementById('promptGrid');
+      el.weeklyTableBody = document.getElementById('weeklyTableBody');
+      el.courseTableBody = document.getElementById('courseTableBody');
+    }
+
+    function bindEvents() {
+      document.getElementById('saveGasBtn').addEventListener('click', saveGasUrl);
+      document.getElementById('testGasBtn').addEventListener('click', testAndLoad);
+      document.getElementById('reloadAllBtn').addEventListener('click', loadAllData);
+      document.getElementById('refreshCurrentBtn').addEventListener('click', refreshCurrentDataset);
+      document.getElementById('clearSelectionBtn').addEventListener('click', clearSelection);
+      document.getElementById('recommendToolsBtn').addEventListener('click', recommendTools);
+      document.getElementById('saveMatchBtn').addEventListener('click', saveMatchSelection);
+      document.getElementById('fillWeeklyFromSelectionBtn').addEventListener('click', fillWeeklyFromSelection);
+      document.getElementById('saveWeeklyBtn').addEventListener('click', saveWeeklyPlan);
+      document.getElementById('fillCourseFromSelectionBtn').addEventListener('click', fillCourseFromSelection);
+      document.getElementById('saveCourseBtn').addEventListener('click', saveCourseDraft);
+
+      el.searchInput.addEventListener('input', renderCurrentCards);
+      el.storyFullText.addEventListener('input', () => {
+        localStorage.setItem(STORAGE_KEYS.storyFullText, el.storyFullText.value);
       });
-    });
-}
 
-ensureBaseDefaults();
-bind();
-updateFooter();
-</script>
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => switchMainTab(btn.dataset.tab));
+      });
+    }
+
+    function restoreLocalState() {
+      state.gasUrl = localStorage.getItem(STORAGE_KEYS.gasUrl) || DEFAULT_GAS_URL;
+      el.gasUrl.value = state.gasUrl;
+      el.storyFullText.value = localStorage.getItem(STORAGE_KEYS.storyFullText) || '';
+      const raw = localStorage.getItem(STORAGE_KEYS.selected);
+      if (raw) {
+        try { state.selected = Object.assign(state.selected, JSON.parse(raw)); } catch (e) {}
+      }
+    }
+
+    function persistSelection() {
+      localStorage.setItem(STORAGE_KEYS.selected, JSON.stringify(state.selected));
+    }
+
+    function saveGasUrl() {
+      state.gasUrl = el.gasUrl.value.trim();
+      localStorage.setItem(STORAGE_KEYS.gasUrl, state.gasUrl);
+      setStatus(null, state.gasUrl ? '已儲存，請按測試' : '尚未設定 GAS URL');
+    }
+
+    async function testAndLoad() {
+      if (!state.gasUrl) return alert('請先貼上 GAS URL');
+      setStatus(false, '測試連線中...');
+      try {
+        const ping = await apiGet('ping');
+        if (!ping.ok) throw new Error('ping failed');
+        setStatus(true, 'GAS 連線成功');
+        await loadAllData();
+      } catch (err) {
+        setStatus(false, '連線失敗：' + err.message);
+      }
+    }
+
+    function setStatus(ok, text) {
+      el.gasStatusText.textContent = text || '尚未連線';
+      el.gasStatusDot.className = 'dot' + (ok === true ? ' ok' : ok === false ? ' bad' : '');
+      state.connectionOk = ok === true;
+    }
+
+    async function loadAllData() {
+      if (!state.gasUrl) return;
+      try {
+        for (const src of DB_SOURCES) {
+          const res = await apiGet(src.action);
+          state.datasets[src.key] = Array.isArray(res.data) ? res.data : [];
+        }
+        const weekly = await apiGet('getWeeklyPlan');
+        state.weekly = Array.isArray(weekly.data) ? weekly.data : [];
+        const courses = await apiGet('getCourses');
+        state.courses = Array.isArray(courses.data) ? courses.data : [];
+        renderCurrentCards();
+        updateSelectedBox();
+        renderWeeklyTable();
+        renderCourseTable();
+        renderPromptBoxes();
+      } catch (err) {
+        setStatus(false, '載入資料失敗：' + err.message);
+      }
+    }
+
+    async function refreshCurrentDataset() {
+      const src = DB_SOURCES.find(x => x.key === state.activeDbKey);
+      if (!src || !state.gasUrl) return;
+      const res = await apiGet(src.action);
+      state.datasets[src.key] = Array.isArray(res.data) ? res.data : [];
+      renderCurrentCards();
+    }
+
+    function apiGet(action, extra = {}) {
+      const url = new URL(state.gasUrl);
+      url.searchParams.set('action', action);
+      Object.entries(extra).forEach(([k, v]) => url.searchParams.set(k, v));
+      return fetch(url.toString()).then(r => r.json());
+    }
+
+    function apiPost(payload) {
+      return fetch(state.gasUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(r => r.json());
+    }
+
+    function renderDbMenu() {
+      el.dbMenu.innerHTML = '';
+      DB_SOURCES.forEach(src => {
+        const btn = document.createElement('button');
+        btn.className = 'side-btn' + (src.key === state.activeDbKey ? ' active' : '');
+        btn.textContent = src.label;
+        btn.addEventListener('click', () => {
+          state.activeDbKey = src.key;
+          renderDbMenu();
+          renderCurrentCards();
+        });
+        el.dbMenu.appendChild(btn);
+      });
+    }
+
+    function renderCurrentCards() {
+      const list = state.datasets[state.activeDbKey] || [];
+      const q = (el.searchInput.value || '').trim().toLowerCase();
+      const filtered = list.filter(item => JSON.stringify(item).toLowerCase().includes(q));
+      el.cardsContainer.innerHTML = '';
+      if (!filtered.length) {
+        el.cardsContainer.innerHTML = '<div class="empty">目前沒有資料，或尚未連上 GAS。</div>';
+        return;
+      }
+      filtered.forEach(item => el.cardsContainer.appendChild(buildCard(item, state.activeDbKey)));
+    }
+
+    function buildCard(item, sourceKey) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const title = getItemTitle(item);
+      const desc = getItemDesc(item, sourceKey);
+      const tags = getItemTags(item);
+      const meta = getItemMeta(item);
+
+      card.innerHTML = `
+        <h4>${escapeHtml(title)}</h4>
+        <div class="meta">${meta.map(m => `<span class="pill">${escapeHtml(m)}</span>`).join('')}</div>
+        <p>${escapeHtml(desc)}</p>
+        <div class="meta">${tags.map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
+      `;
+
+      const row = document.createElement('div');
+      row.className = 'actions-row';
+
+      const btn = document.createElement('button');
+      btn.className = 'btn small';
+      btn.textContent = '加入匹配';
+      btn.addEventListener('click', () => selectItem(sourceKey, item));
+      row.appendChild(btn);
+
+      card.appendChild(row);
+      return card;
+    }
+
+    function getItemTitle(item) {
+      return item.title || item.subtitle || item.topic || item.tool_name || item['篇名 (A)'] || item['子主題 (影片標題建議)'] || item['主題'] || item.id || '未命名';
+    }
+
+    function getItemDesc(item, sourceKey) {
+      return item.summary || item.content || item.parenting_insight || item.life_example || item.description || item.core_function || item.overall_plan || item['故事摘要 (B)'] || item['親民描述與教養洞察'] || item['親民描述與生活實例'] || item['說明'] || item['整體策劃'] || `資料來源：${sourceKey}`;
+    }
+
+    function getItemTags(item) {
+      const raw = item.tags || item.theme_group || item.scenario_type || item.decode_type || item['關鍵字 Tag (C)'] || item['主題群'] || item['情境類型'] || item.tool_type || '';
+      return String(raw).split(/[,，]/).map(s => s.trim()).filter(Boolean).slice(0, 5);
+    }
+
+    function getItemMeta(item) {
+      const arr = [];
+      if (item.id || item.story_id) arr.push(String(item.id || item.story_id));
+      if (item.toolCode) arr.push(item.toolCode);
+      if (item.tool_main) arr.push('主工具：' + item.tool_main);
+      if (item.priority) arr.push('優先：' + item.priority);
+      if (item.type) arr.push(item.type);
+      if (item.status) arr.push(item.status);
+      return arr.slice(0, 4);
+    }
+
+    function selectItem(sourceKey, item) {
+      if (sourceKey === 'stories') state.selected.story = item;
+      else if (['emotion','relation','parenting'].includes(sourceKey)) pushUnique('decode', item);
+      else if (sourceKey === 'insight') pushUnique('insight', item);
+      else if (sourceKey === 'tools') pushUnique('tool', item);
+      else if (sourceKey === 'scenarioToolMap') pushUnique('scenarioToolMap', item);
+      else if (sourceKey === 'scenarioPlan') pushUnique('scenarioPlan', item);
+      persistSelection();
+      updateSelectedBox();
+      renderPromptBoxes();
+    }
+
+    function pushUnique(key, item) {
+      const list = state.selected[key] || [];
+      const token = JSON.stringify(item);
+      if (!list.some(x => JSON.stringify(x) === token)) list.push(item);
+      state.selected[key] = list;
+    }
+
+    function updateSelectedBox() {
+      el.selectedBox.innerHTML = '';
+      const groups = [
+        ['主故事', state.selected.story ? [state.selected.story] : []],
+        ['解碼', state.selected.decode],
+        ['心靈感悟', state.selected.insight],
+        ['工具', state.selected.tool],
+        ['工具匹配', state.selected.scenarioToolMap],
+        ['情境規劃', state.selected.scenarioPlan]
+      ];
+      groups.forEach(([label, items]) => {
+        const div = document.createElement('div');
+        div.className = 'selection-item';
+        div.innerHTML = `<strong>${label}</strong>`;
+        if (!items.length) {
+          div.innerHTML += '<div class="small-text">尚未選擇</div>';
+        } else {
+          items.forEach((item, idx) => {
+            const line = document.createElement('div');
+            line.className = 'small-text';
+            line.style.marginBottom = '8px';
+            line.textContent = `${idx + 1}. ${getItemTitle(item)}`;
+            const btn = document.createElement('button');
+            btn.className = 'btn danger small';
+            btn.textContent = '移除';
+            btn.style.marginLeft = '8px';
+            btn.addEventListener('click', () => removeSelected(label, idx));
+            line.appendChild(btn);
+            div.appendChild(line);
+          });
+        }
+        el.selectedBox.appendChild(div);
+      });
+    }
+
+    function removeSelected(label, idx) {
+      if (label === '主故事') state.selected.story = null;
+      if (label === '解碼') state.selected.decode.splice(idx, 1);
+      if (label === '心靈感悟') state.selected.insight.splice(idx, 1);
+      if (label === '工具') state.selected.tool.splice(idx, 1);
+      if (label === '工具匹配') state.selected.scenarioToolMap.splice(idx, 1);
+      if (label === '情境規劃') state.selected.scenarioPlan.splice(idx, 1);
+      persistSelection();
+      updateSelectedBox();
+      renderPromptBoxes();
+    }
+
+    function clearSelection() {
+      state.selected = { story: null, decode: [], insight: [], tool: [], scenarioToolMap: [], scenarioPlan: [] };
+      persistSelection();
+      updateSelectedBox();
+      renderPromptBoxes();
+    }
+
+    function recommendTools() {
+      if (!state.selected.story && !state.selected.scenarioPlan.length) return alert('請先選故事或情境規劃');
+      const maps = state.datasets.scenarioToolMap || [];
+      const storyScenario = state.selected.story?.scenario_type || state.selected.story?.emotion_type || '';
+      const planScenario = state.selected.scenarioPlan[0]?.scenario_type || '';
+      const target = String(planScenario || storyScenario || '').trim();
+      if (!target) return alert('目前選擇裡沒有可對應的情境類型');
+
+      const hit = maps.filter(x => String(x.scenario_type || '').trim() === target);
+      if (!hit.length) return alert('工具匹配表中找不到對應情境：' + target);
+
+      const toolsDb = state.datasets.tools || [];
+      hit.forEach(map => {
+        [map.tool_main, map.tool_sub, map.tool_extend].filter(Boolean).forEach(code => {
+          const found = toolsDb.find(t => String(t.toolCode || t.id || '').trim() === String(code).trim());
+          if (found) pushUnique('tool', found);
+        });
+      });
+      persistSelection();
+      updateSelectedBox();
+      renderPromptBoxes();
+    }
+
+    async function saveMatchSelection() {
+      if (!state.connectionOk) return alert('請先連上 GAS');
+      if (!state.selected.story) return alert('請先選故事');
+
+      const row = {
+        story_id: state.selected.story.id || state.selected.story.story_id || '',
+        title: getItemTitle(state.selected.story),
+        content: state.selected.story.summary || state.selected.story.content || '',
+        emotion_type: state.selected.story.emotion_type || state.selected.story.scenario_type || '',
+        tags: state.selected.story.tags || '',
+        target: 'PWA匹配',
+        decode_type: state.selected.decode.map(getItemTitle).join('｜'),
+        tool_ids: state.selected.tool.map(x => x.toolCode || x.id || '').join(','),
+        insight_ids: state.selected.insight.map(x => x.id || '').join(','),
+        note: '由 PWA v1.6 寫入'
+      };
+
+      const res = await apiPost({ action: 'saveMatchSelection', row });
+      alert(res.ok ? '匹配結果已寫入 story_match' : ('寫入失敗：' + (res.error || '未知錯誤')));
+    }
+
+    function renderPromptBoxes() {
+      el.promptGrid.innerHTML = '';
+      TASKS.forEach(task => {
+        const box = document.createElement('div');
+        box.className = 'prompt-box';
+        const generateText = task.generate();
+        const refillText = task.refill();
+        box.innerHTML = `
+          <h3>${task.title}</h3>
+          <div class="split-2">
+            <div>
+              <div class="inline-note" style="margin-bottom:8px;">生成指令</div>
+              <div class="prompt-actions">
+                <button class="btn small" data-copy="${task.key}_gen">一鍵複製生成</button>
+              </div>
+              <textarea id="${task.key}_gen" class="textarea">${escapeHtml(generateText)}</textarea>
+            </div>
+            <div>
+              <div class="inline-note" style="margin-bottom:8px;">回填指令</div>
+              <div class="prompt-actions">
+                <button class="btn green small" data-copy="${task.key}_refill">一鍵複製回填</button>
+              </div>
+              <textarea id="${task.key}_refill" class="textarea">${escapeHtml(refillText)}</textarea>
+            </div>
+          </div>
+        `;
+        el.promptGrid.appendChild(box);
+      });
+
+      el.promptGrid.querySelectorAll('[data-copy]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-copy');
+          await navigator.clipboard.writeText(document.getElementById(id).value);
+          const original = btn.textContent;
+          btn.textContent = '已複製';
+          setTimeout(() => btn.textContent = original, 1200);
+        });
+      });
+    }
+
+    function buildCommonBundle() {
+      return {
+        story: state.selected.story,
+        decodes: state.selected.decode,
+        insights: state.selected.insight,
+        tools: state.selected.tool,
+        fullText: el.storyFullText.value.trim()
+      };
+    }
+
+    function formatItemBlock(item) {
+      return item ? JSON.stringify(item, null, 2) : '（尚未選擇）';
+    }
+
+    function formatListBlock(list) {
+      return list && list.length ? list.map((x, i) => `${i + 1}. ${JSON.stringify(x, null, 2)}`).join('\n\n') : '（尚未選擇）';
+    }
+
+    function buildTask1Prompt() {
+      const b = buildCommonBundle();
+      return `請根據以下匹配內容，執行「原料提取與主題串接」。
+
+【主故事】
+${formatItemBlock(b.story)}
+
+【解碼素材】
+${formatListBlock(b.decodes)}
+
+【心靈感悟】
+${formatListBlock(b.insights)}
+
+【工具】
+${formatListBlock(b.tools)}
+
+【補充故事原文】
+${b.fullText || '（目前無）'}
+
+請輸出：
+1. 最適合的長影片主題
+2. 可延伸的週二 / 週四 / 週六內容串法
+3. 建議導流工具
+4. 可貼回試算表的簡潔結果`;
+    }
+
+    function buildTask1Refill() {
+      return `請根據已生成的主題串接結果，整理成可直接貼入 Google 試算表的格式，不可加入說明文字，並以 Tab 分隔格式輸出。
+
+【目標工作表】story_match
+
+【欄位順序】
+story_id	title	content	emotion_type	tags	target	decode_type	tool_ids	insight_ids	note
+
+【規則】
+1. 只輸出 1 列
+2. 欄位順序不可改
+3. target 請填「長影片規劃」或最適合的用途
+4. tool_ids 以逗號分隔
+5. insight_ids 以逗號分隔`;
+    }
+
+    function buildTask2Prompt() {
+      const b = buildCommonBundle();
+      return `請根據提供的匹配內容，生成可直接貼入試算表的長影片內容。
+
+【主故事】
+${formatItemBlock(b.story)}
+
+【解碼】
+${formatListBlock(b.decodes)}
+
+【心靈感悟】
+${formatListBlock(b.insights)}
+
+【工具】
+${formatListBlock(b.tools)}
+
+【補充故事原文】
+${b.fullText || '（目前無）'}
+
+請輸出長影片表所需內容，包含：影片標題、Shorts標題、核心訊息、腳本骨架、AI繪圖提示詞、導流工具、AI協作文案指令、AI協作文案。請依影片類型調整風格。`;
+    }
+
+    function buildTask2Refill() {
+      return `請根據已生成的長影片內容，整理為可直接貼入 Google 試算表的格式，不可加入說明文字，不可缺欄，並以 Tab 分隔格式輸出。
+
+【目標工作表】long_video
+
+【欄位順序】
+週次	影片類型	內容ID	影片標題	Shorts標題	核心訊息	腳本骨架	AI繪圖提示詞	生圖指令存放區	導流工具	發布狀態	AI協作文案指令	AI協作文案成品存放區	長影片連結	修正後文案	Shorts 影片連結	Short 指令	發佈表回填指令	備註
+
+【規則】
+1. 必須完整輸出 1 列資料
+2. 欄位順序不可改
+3. 發布狀態預設為「未發布」
+4. 沒有的欄位可先留空
+5. 不要加說明、編號、markdown`;
+    }
+
+    function buildTask3Prompt() {
+      const b = buildCommonBundle();
+      return `請根據提供的長影片內容與匹配素材，生成 6 支 Shorts，包含心靈感悟 / 心腦科學 / 教養故事三種類型各 A、B 版本。
+
+【主故事】
+${formatItemBlock(b.story)}
+
+【解碼】
+${formatListBlock(b.decodes)}
+
+【心靈感悟】
+${formatListBlock(b.insights)}
+
+【工具】
+${formatListBlock(b.tools)}
+
+【補充故事原文】
+${b.fullText || '（目前無）'}
+
+請輸出欄位：長影片ID、Shorts類型、版本、Shorts標題、Shorts核心句、開場3秒Hook、故事點、結尾引導、導流工具、發布狀態、成品存放區。用 Tab 分隔格式。`;
+    }
+
+    function buildTask3Refill() {
+      return `請根據已生成的 Shorts 內容，整理為可直接貼入 Google 試算表的格式，不可加入說明文字，不可缺欄，並以 Tab 分隔格式輸出。
+
+【目標工作表】shorts
+
+【欄位順序】
+長影片ID	Shorts類型	版本	Shorts標題	Shorts核心句	開場3秒Hook	故事點	結尾引導	導流工具	發布狀態	AI協作指令	文案存放區	修正後文案	Shorts 影片連結	導流長影片連結	表現指標
+
+【規則】
+1. 需輸出 6 列
+2. 三種類型各 A、B 版本
+3. 發布狀態預設為「未發布」
+4. 不要加入任何說明文字`;
+    }
+
+    function buildTask4Prompt() {
+      const b = buildCommonBundle();
+      return `請根據目前素材生成可直接貼入試算表的發佈內容表。
+
+【主故事】
+${formatItemBlock(b.story)}
+
+【解碼】
+${formatListBlock(b.decodes)}
+
+【心靈感悟】
+${formatListBlock(b.insights)}
+
+【工具】
+${formatListBlock(b.tools)}
+
+請產出 YouTube 與 Instagram 兩平台的標題、完整文案、短文案、Hashtags、CTA 導流、導流連結、發布狀態，並以 Tab 分隔格式輸出。`;
+    }
+
+    function buildTask4Refill() {
+      return `請根據已生成的發布內容，整理為可直接貼入 Google 試算表的格式，不可加入說明文字，不可缺欄，並以 Tab 分隔格式輸出。
+
+【目標工作表】publish_content
+
+【欄位順序】
+內容ID	平台	標題	完整文案	短文案	Hashtags	CTA導流	導流連結	發布狀態	影片連結	最佳版本文案	發布日期
+
+【規則】
+1. 至少輸出 YouTube 與 Instagram 兩列
+2. 發布狀態預設為「未發布」
+3. 沒有的欄位可先留空
+4. 不要加說明、markdown 或編號`;
+    }
+
+    function buildTask5Prompt() {
+      const b = buildCommonBundle();
+      return `請把以下匹配內容轉成講題或 12 週課程草稿。
+
+【主故事】
+${formatItemBlock(b.story)}
+
+【解碼】
+${formatListBlock(b.decodes)}
+
+【心靈感悟】
+${formatListBlock(b.insights)}
+
+【工具】
+${formatListBlock(b.tools)}
+
+【補充故事原文】
+${b.fullText || '（目前無）'}
+
+請輸出：課程名稱、課程摘要、課程目標、課程大綱、每週模組建議、可搭配工具、可延伸作業或練習。`;
+    }
+
+    function buildTask5Refill() {
+      return `請根據已生成的課程草稿，整理為可直接貼入 Google 試算表的格式，不可加入說明文字，不可缺欄，並以 Tab 分隔格式輸出。
+
+【目標工作表】course_db
+
+【欄位順序】
+id	title	type	status	version	owner	audience	duration_min	capacity	tags	summary	objectives	outline	materials	links	assets	notes	created_at	updated_at	kind	kind_other	schedule_mode	module_sessions	session_minutes	single_duration
+
+【規則】
+1. 只輸出 1 列
+2. status 預設 draft
+3. version 可填 v1
+4. created_at / updated_at 若無可留空
+5. 不要加入任何說明文字`;
+    }
+
+    function switchMainTab(tab) {
+      state.activeTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(tab + 'Section').classList.add('active');
+    }
+
+    function renderWeeklyTable() {
+      el.weeklyTableBody.innerHTML = '';
+      if (!state.weekly.length) {
+        el.weeklyTableBody.innerHTML = '<tr><td colspan="7" class="empty">目前沒有週規劃資料</td></tr>';
+        return;
+      }
+      state.weekly.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(row['週次'] || row.week_no || '')}</td>
+          <td>${escapeHtml(row['週主題'] || row.week_theme || '')}</td>
+          <td>${escapeHtml(row['週二心靈感悟'] || '')}</td>
+          <td>${escapeHtml(row['週四心腦科學'] || '')}</td>
+          <td>${escapeHtml(row['週六故事'] || '')}</td>
+          <td>${escapeHtml(row['導流工具'] || '')}</td>
+          <td>${escapeHtml(row['發布狀態'] || '')}</td>
+        `;
+        el.weeklyTableBody.appendChild(tr);
+      });
+    }
+
+    function fillWeeklyFromSelection() {
+      const story = state.selected.story;
+      const decode = state.selected.decode[0];
+      const insight = state.selected.insight[0];
+      const tool = state.selected.tool[0];
+
+      document.getElementById('weekTuesday').value = insight ? getItemTitle(insight) : '';
+      document.getElementById('weekThursday').value = decode ? getItemTitle(decode) : '';
+      document.getElementById('weekSaturday').value = story ? getItemTitle(story) : '';
+      document.getElementById('weekTheme').value = story ? getItemTitle(story) : (decode ? getItemTitle(decode) : '');
+      document.getElementById('weekTool').value = tool ? (tool.toolCode || tool.id || getItemTitle(tool)) : '';
+      document.getElementById('weekStatus').value = '未發布';
+    }
+
+    async function saveWeeklyPlan() {
+      if (!state.connectionOk) return alert('請先連上 GAS');
+      const row = {
+        '週次': val('weekNo'),
+        '週主題': val('weekTheme'),
+        '週二心靈感悟': val('weekTuesday'),
+        '週四心腦科學': val('weekThursday'),
+        '週六故事': val('weekSaturday'),
+        '故事 ID': state.selected.story?.id || '',
+        '導流工具': val('weekTool'),
+        '影片優先順序': val('weekPriority'),
+        '長片腳本': val('weekLongVideo'),
+        'Shorts 生成': val('weekShorts'),
+        '發布狀態': val('weekStatus') || '未發布'
+      };
+      const res = await apiPost({ action: 'saveWeeklyPlan', row });
+      if (res.ok) {
+        alert('已寫入 weekly_plan');
+        const weekly = await apiGet('getWeeklyPlan');
+        state.weekly = Array.isArray(weekly.data) ? weekly.data : [];
+        renderWeeklyTable();
+      } else {
+        alert('寫入失敗：' + (res.error || '未知錯誤'));
+      }
+    }
+
+    function renderCourseTable() {
+      el.courseTableBody.innerHTML = '';
+      if (!state.courses.length) {
+        el.courseTableBody.innerHTML = '<tr><td colspan="5" class="empty">目前沒有課程資料</td></tr>';
+        return;
+      }
+      state.courses.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${escapeHtml(row.title || '')}</td>
+          <td>${escapeHtml(row.type || '')}</td>
+          <td>${escapeHtml(row.status || '')}</td>
+          <td>${escapeHtml(row.audience || '')}</td>
+          <td>${escapeHtml(row.summary || '')}</td>
+        `;
+        el.courseTableBody.appendChild(tr);
+      });
+    }
+
+    function fillCourseFromSelection() {
+      const story = state.selected.story;
+      const decodeTitles = state.selected.decode.map(getItemTitle).join('、');
+      const insightTitles = state.selected.insight.map(getItemTitle).join('、');
+      const toolCodes = state.selected.tool.map(x => x.toolCode || x.id || getItemTitle(x)).join('、');
+
+      document.getElementById('courseTitle').value = story ? `從「${getItemTitle(story)}」談情緒理解與關係修復` : '';
+      document.getElementById('courseType').value = '12週課程';
+      document.getElementById('courseAudience').value = '家長 / 教育工作者';
+      document.getElementById('courseDuration').value = '720';
+      document.getElementById('courseCapacity').value = '30';
+      document.getElementById('courseKind').value = '線上或混合';
+      document.getElementById('courseSummary').value = '以故事、解碼、心靈感悟與工具為核心，帶領學員從情緒理解走到關係修復與實際應用。';
+      document.getElementById('courseObjectives').value = '1. 理解故事背後的情緒與心理機制\n2. 學會用教養解碼看懂衝突\n3. 練習把工具帶入生活情境';
+      document.getElementById('courseOutline').value = `主故事：${story ? getItemTitle(story) : ''}\n解碼：${decodeTitles}\n感悟：${insightTitles}\n工具：${toolCodes}`;
+      document.getElementById('courseMaterials').value = `來源素材：故事庫、解碼庫、心靈感悟庫、工具庫\n補充原文：${el.storyFullText.value.trim() || '無'}`;
+      document.getElementById('courseNotes').value = '由 PWA v1.6 自動帶入草稿';
+    }
+
+    async function saveCourseDraft() {
+      if (!state.connectionOk) return alert('請先連上 GAS');
+      const row = {
+        id: 'COURSE-' + Date.now(),
+        title: val('courseTitle'),
+        type: val('courseType'),
+        status: 'draft',
+        version: 'v1',
+        owner: 'PWA',
+        audience: val('courseAudience'),
+        duration_min: val('courseDuration'),
+        capacity: val('courseCapacity'),
+        tags: [state.selected.story?.tags || '', state.selected.decode.map(x => x.tags || '').join(',')].filter(Boolean).join(','),
+        summary: val('courseSummary'),
+        objectives: val('courseObjectives'),
+        outline: val('courseOutline'),
+        materials: val('courseMaterials'),
+        links: '',
+        assets: '',
+        notes: val('courseNotes'),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        kind: val('courseKind'),
+        kind_other: '',
+        schedule_mode: 'module',
+        module_sessions: '12',
+        session_minutes: '60',
+        single_duration: '60'
+      };
+      const res = await apiPost({ action: 'saveCourseDraft', mode: 'append', row });
+      if (res.ok) {
+        alert('已寫入 course_db');
+        const courses = await apiGet('getCourses');
+        state.courses = Array.isArray(courses.data) ? courses.data : [];
+        renderCourseTable();
+      } else {
+        alert('寫入失敗：' + (res.error || '未知錯誤'));
+      }
+    }
+
+    function val(id) {
+      return document.getElementById(id).value.trim();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+  </script>
 </body>
 </html>
