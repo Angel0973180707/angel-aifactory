@@ -932,6 +932,85 @@ function renderCurrentCards(){
   filtered.forEach(item=> el.cardsContainer.appendChild(buildCard(item, state.activeDbKey)));
 }
 
+
+function toCleanString(v){
+  return String(v == null ? '' : v).replace(/\s+/g,' ').trim();
+}
+
+function candidateValue(item, keys){
+  for(const key of keys){
+    const val = toCleanString(item[key]);
+    if(val) return val;
+  }
+  return '';
+}
+
+function looksLikeInstruction(text){
+  const s = toCleanString(text);
+  if(!s) return false;
+  return s.length > 18 && /生成|場景|字幕|秒|淡入|淡出|提示詞|AI|繪本|插畫|鏡頭|腳本|輸出/.test(s);
+}
+
+function looksLikeTitle(text){
+  const s = toCleanString(text);
+  if(!s) return false;
+  if(s.length < 2 || s.length > 40) return false;
+  if(looksLikeInstruction(s)) return false;
+  return true;
+}
+
+function resolveInsightLikeFields(item){
+  const raw = {
+    id: candidateValue(item, ['id','ID','系統ID']),
+    serial: candidateValue(item, ['serial_no','編號','serial']),
+    title: candidateValue(item, ['title','標題']),
+    main: candidateValue(item, ['main_theme','大主題']),
+    sub: candidateValue(item, ['sub_theme','子主題']),
+    summary: candidateValue(item, ['summary','摘要']),
+    content: candidateValue(item, ['content','內容','AI協作指令','說明']),
+    emotionKeywords: candidateValue(item, ['emotion_keywords','情緒關鍵字']),
+    scenario: candidateValue(item, ['scenario_type','情境類型']),
+    shortsType: candidateValue(item, ['suggested_shorts_type','建議Shorts類型']),
+    tags: candidateValue(item, ['tags','標籤'])
+  };
+
+  // 自動偵測錯位：若 title 很短、main 像標題、sub 像內容，就重排
+  if (
+    raw.main && looksLikeTitle(raw.main) &&
+    (!raw.title || raw.title.length <= 4 || raw.title === raw.sub) &&
+    (looksLikeInstruction(raw.sub) || (!raw.content && raw.sub.length > 12))
+  ){
+    return {
+      id: raw.id,
+      serial_no: raw.serial || raw.id,
+      title: raw.main,
+      main_theme: raw.serial,
+      sub_theme: raw.title,
+      content: raw.sub,
+      summary: raw.summary,
+      emotion_keywords: raw.emotionKeywords,
+      scenario_type: raw.scenario,
+      suggested_shorts_type: raw.shortsType,
+      tags: raw.tags
+    };
+  }
+
+  return {
+    id: raw.id,
+    serial_no: raw.serial,
+    title: raw.title,
+    main_theme: raw.main,
+    sub_theme: raw.sub,
+    content: raw.content,
+    summary: raw.summary,
+    emotion_keywords: raw.emotionKeywords,
+    scenario_type: raw.scenario,
+    suggested_shorts_type: raw.shortsType,
+    tags: raw.tags
+  };
+}
+
+
 function buildCard(item, sourceKey){
   const card = document.createElement('div');
   card.className = 'card';
@@ -953,59 +1032,42 @@ function buildCard(item, sourceKey){
 }
 
 function getItemTitle(item){
-  return item.title
-    || item['標題']
-    || item.headline
-    || item.name
-    || item.subtitle
-    || item['篇名']
-    || item.topic
-    || item.tool_name
-    || item.main_theme
-    || item['大主題']
-    || item.sub_theme
-    || item['子主題']
-    || item.serial_no
-    || item.id
-    || item.story_id
-    || item['編號']
-    || '未命名';
-}
-function getItemDesc(item, sourceKey){
-  return item.summary
-    || item['摘要']
-    || item.content
-    || item['內容']
-    || item.parenting_insight
-    || item.life_example
-    || item.description
-    || item['說明']
-    || item.core_function
-    || item.notes
-    || item.emotion_keywords
-    || item['情緒關鍵字']
-    || item.main_theme
-    || item['大主題']
-    || item.sub_theme
-    || item['子主題']
-    || `資料來源：${sourceKey}`;
+  const fixed = resolveInsightLikeFields(item);
+
+  const titleCandidates = [
+    fixed.title,
+    candidateValue(item, ['標題','title']),
+    fixed.main_theme,
+    candidateValue(item, ['大主題','main_theme']),
+    fixed.sub_theme,
+    candidateValue(item, ['子主題','sub_theme']),
+    candidateValue(item, ['headline','name','subtitle','篇名','topic','tool_name']),
+    fixed.serial_no,
+    fixed.id,
+    candidateValue(item, ['編號','serial_no','id','story_id'])
+  ];
+
+  for(const val of titleCandidates){
+    if(looksLikeTitle(val)) return toCleanString(val);
+  }
+  return toCleanString(titleCandidates.find(Boolean) || '未命名');
 }
 function getItemTags(item){
-  const raw = item.tags || item.theme_group || item.scenario_type || item.decode_type || item.tool_type || item.emotion_type || '';
+  const fixed = resolveInsightLikeFields(item);
+  const raw = fixed.tags || item.tags || item['標籤'] || item.theme_group || item.scenario_type || item['情境類型'] || item.decode_type || item.tool_type || item.emotion_type || '';
   return String(raw).split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,6);
 }
 function getItemMeta(item){
+  const fixed = resolveInsightLikeFields(item);
   const arr = [];
-  if(item.id || item.story_id || item.serial_no || item['編號']) {
-    arr.push(String(item.id || item.story_id || item.serial_no || item['編號']));
-  }
+  if(fixed.id || fixed.serial_no) arr.push(String(fixed.id || fixed.serial_no));
+  if(fixed.main_theme && fixed.main_theme !== getItemTitle(item)) arr.push('主題：' + fixed.main_theme);
+  if(fixed.sub_theme && fixed.sub_theme !== getItemTitle(item) && !looksLikeInstruction(fixed.sub_theme)) arr.push('子題：' + fixed.sub_theme);
   if(item.toolCode || item.tool_code) arr.push(item.toolCode || item.tool_code);
-  if(item.main_theme || item['大主題']) arr.push('主題：' + (item.main_theme || item['大主題']));
-  if(item.sub_theme || item['子主題']) arr.push('子題：' + (item.sub_theme || item['子主題']));
   if(item.tool_main) arr.push('主工具：' + item.tool_main);
   if(item.priority) arr.push('優先：' + item.priority);
   if(item.video_type) arr.push(item.video_type);
-  if(item.scenario_type) arr.push('情境：' + item.scenario_type);
+  if(fixed.scenario_type) arr.push('情境：' + fixed.scenario_type);
   return arr.slice(0,5);
 }
 
@@ -1172,13 +1234,14 @@ function buildDataPack(){
   sections.push('【心靈感悟】');
   if(insights.length){
     insights.forEach((x, i)=>{
-      sections.push(`${i+1}. 標題：${x.title || x['標題'] || x.main_theme || x['大主題'] || x.sub_theme || x['子主題'] || x.serial_no || ''}`);
-      sections.push(`大主題：${x.main_theme || ''}`);
-      sections.push(`子主題：${x.sub_theme || ''}`);
-      sections.push(`對應情境：${x.scenario_type || ''}`);
-      sections.push(`建議Shorts類型：${x.suggested_shorts_type || ''}`);
-      sections.push(`情緒關鍵字：${x.emotion_keywords || ''}`);
-      sections.push(`適用影片類型：${x.applicable_video_type || ''}`);
+      const fx = resolveInsightLikeFields(x);
+      sections.push(`${i+1}. 標題：${fx.title || x.title || x['標題'] || ''}`);
+      sections.push(`大主題：${fx.main_theme || x.main_theme || x['大主題'] || ''}`);
+      sections.push(`子主題：${fx.sub_theme || x.sub_theme || x['子主題'] || ''}`);
+      sections.push(`對應情境：${fx.scenario_type || x.scenario_type || x['情境類型'] || ''}`);
+      sections.push(`建議Shorts類型：${fx.suggested_shorts_type || x.suggested_shorts_type || x['建議Shorts類型'] || ''}`);
+      sections.push(`情緒關鍵字：${fx.emotion_keywords || x.emotion_keywords || x['情緒關鍵字'] || ''}`);
+      sections.push(`適用影片類型：${x.applicable_video_type || x['適用影片類型'] || ''}`);
     });
   } else sections.push('（尚未選感悟）');
 
