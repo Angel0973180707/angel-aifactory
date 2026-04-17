@@ -3,33 +3,35 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI 自動化影音工廠 PWA v2.0</title>
+<title>AI 內容工廠 PWA v2.2 PRO</title>
 <style>
 :root{
   --bg:#f7f3eb;--panel:#fffdf8;--card:#fff;--line:#e7dccd;--text:#3d352d;--muted:#7f7468;
-  --accent:#b97a3d;--accent2:#7ea37a;--danger:#b85b5b;--shadow:0 10px 24px rgba(88,67,44,.08);--radius:20px;
+  --accent:#b97a3d;--accent2:#7ea37a;--danger:#b85b5b;--soft:#ece2d4;
+  --shadow:0 10px 24px rgba(88,67,44,.08);--radius:20px;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;background:linear-gradient(180deg,#fbf7ef 0%,#f5efe5 100%);color:var(--text)}
 button,input,textarea,select{font:inherit}
-.app{max-width:1600px;margin:0 auto;padding:18px}
+input,textarea,select{outline:none}
+.app{max-width:1680px;margin:0 auto;padding:18px}
 .topbar{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;margin-bottom:16px}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
-.title{font-size:28px;font-weight:800;margin:0 0 8px}
-.sub{color:var(--muted);line-height:1.6;margin:0}
+.title{font-size:30px;font-weight:800;margin:0 0 8px}
+.sub{color:var(--muted);line-height:1.7;margin:0}
 .settings-grid{display:grid;grid-template-columns:1fr auto auto auto;gap:8px;align-items:center}
-.input,.textarea,.select{width:100%;border:1px solid #d8ccb9;border-radius:14px;padding:11px 12px;background:#fff;color:var(--text);outline:none}
+.input,.textarea,.select{width:100%;border:1px solid #d8ccb9;border-radius:14px;padding:11px 12px;background:#fff;color:var(--text)}
 .textarea{min-height:150px;resize:vertical;line-height:1.7}
 .btn{border:0;border-radius:14px;padding:11px 14px;background:var(--accent);color:#fff;cursor:pointer;font-weight:700;transition:transform .15s ease,opacity .15s ease}
 .btn:hover{transform:translateY(-1px)}
-.btn.secondary{background:#8d7c68}.btn.soft{background:#ece2d4;color:var(--text)}.btn.green{background:var(--accent2)}.btn.danger{background:var(--danger)}.btn.small{padding:8px 11px;font-size:13px;border-radius:12px}
+.btn.secondary{background:#8d7c68}.btn.soft{background:var(--soft);color:var(--text)}.btn.green{background:var(--accent2)}.btn.danger{background:var(--danger)}.btn.small{padding:8px 11px;font-size:13px;border-radius:12px}
 .status{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:14px;margin-top:10px;flex-wrap:wrap}
 .dot{width:10px;height:10px;border-radius:50%;background:#d8c8b3}.dot.ok{background:#6ea86f}.dot.bad{background:#d06c6c}
 .main-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:6px 0 16px}
 .tab-btn{border:1px solid var(--line);background:#f5ecdf;color:var(--text);padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700}
 .tab-btn.active{background:var(--accent);color:#fff;border-color:transparent}
 .section{display:none}.section.active{display:block}
-.db-layout{display:grid;grid-template-columns:230px minmax(0,1fr) 380px;gap:14px}
+.db-layout{display:grid;grid-template-columns:230px minmax(0,1fr) 410px;gap:14px}
 .side-menu{display:flex;flex-direction:column;gap:8px}
 .side-btn{text-align:left;border:1px solid var(--line);background:#fff;padding:12px 14px;border-radius:16px;cursor:pointer;font-weight:700;color:var(--text)}
 .side-btn.active{background:#f2e4d2;border-color:#d8b58f}
@@ -45,30 +47,41 @@ button,input,textarea,select{font:inherit}
 .selection-item strong{display:block;margin-bottom:6px}
 .small-text{font-size:13px;color:var(--muted);line-height:1.55}
 .actions-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-.prompt-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.prompt-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .prompt-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}
 .split-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.split-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
 .prompt-actions{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-.klm-grid,.plan-layout,.course-layout{display:grid;grid-template-columns:1.2fr .9fr;gap:14px}
+.klm-grid,.plan-layout,.course-layout,.publish-layout,.knowledge-layout,.template-layout{display:grid;grid-template-columns:1.2fr .9fr;gap:14px}
+.video-layout{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 .table-wrap{max-height:72vh;overflow:auto;border:1px solid var(--line);border-radius:18px;background:#fff}
 table{width:100%;border-collapse:collapse;font-size:14px;background:#fff}
 th,td{border-bottom:1px solid #eee3d4;padding:10px;text-align:left;vertical-align:top}
 th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
 .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.form-grid .full{grid-column:1/-1}
+.form-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.form-grid .full,.form-grid-3 .full{grid-column:1/-1}
 .empty{color:var(--muted);font-size:14px;padding:16px;text-align:center;border:1px dashed var(--line);border-radius:16px;background:#fffdfb}
 .inline-note{font-size:12px;color:var(--muted)}
 .badge{display:inline-block;padding:4px 8px;border-radius:999px;background:#f4ece0;font-size:12px;color:#6a5c4d}
-@media (max-width:1200px){.db-layout,.topbar,.split-2,.klm-grid,.plan-layout,.course-layout{grid-template-columns:1fr}.cards,.right-stack{max-height:none}}
-@media (max-width:760px){.settings-grid,.toolbar,.form-grid{grid-template-columns:1fr}}
+.mode-box{padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.list-box{display:flex;flex-direction:column;gap:8px;max-height:62vh;overflow:auto;padding-right:4px}
+.template-item,.short-card,.draft-card{border:1px solid var(--line);border-radius:16px;background:#fff;padding:12px}
+.template-item.active{border-color:#d8b58f;background:#fff8f0}
+label{font-size:13px;color:#6a5c4d;font-weight:700}
+.template-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+@media (max-width:1400px){.video-layout,.prompt-grid{grid-template-columns:1fr}}
+@media (max-width:1200px){.db-layout,.topbar,.split-2,.split-3,.klm-grid,.plan-layout,.course-layout,.publish-layout,.knowledge-layout,.template-layout{grid-template-columns:1fr}.cards,.right-stack{max-height:none}}
+@media (max-width:760px){.settings-grid,.toolbar,.form-grid,.form-grid-3{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="topbar">
     <div class="panel">
-      <h1 class="title">AI 自動化影音工廠 PWA v2.0</h1>
-      <p class="sub">依你指定流程：資料匹配 → NotebookLM 資料包 → 任務一/二 → 長文擴寫 → KLM 結果貼回解析 → 寫回表單。保留手動調整空間。</p>
+      <h1 class="title">AI 內容工廠 PWA v2.2 PRO</h1>
+      <p class="sub">完整流程：資料匹配 → NotebookLM 資料包 → 模板中心 → 長片三層(raw / optimized / final) → Shorts 6支矩陣 → YouTube / IG 發布 → 知識擴充草稿。保留人工調整空間，單檔可部署。</p>
     </div>
     <div class="panel">
       <div class="settings-grid">
@@ -78,14 +91,20 @@ th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
         <button class="btn soft" id="reloadAllBtn">重載資料</button>
       </div>
       <div class="status"><span class="dot" id="gasStatusDot"></span><span id="gasStatusText">尚未連線</span></div>
+      <div class="inline-note" style="margin-top:8px;">建議：先測試 GAS，再進行資料匹配與回填。</div>
     </div>
   </div>
 
   <div class="main-tabs">
     <button class="tab-btn active" data-tab="database">資料庫匹配中心</button>
     <button class="tab-btn" data-tab="klm">NotebookLM 工作台</button>
+    <button class="tab-btn" data-tab="templates">模板中心</button>
+    <button class="tab-btn" data-tab="video">長片三層系統</button>
+    <button class="tab-btn" data-tab="shorts">Shorts 工作台</button>
+    <button class="tab-btn" data-tab="publish">發布內容</button>
     <button class="tab-btn" data-tab="weekly">12 週內容規劃</button>
     <button class="tab-btn" data-tab="courses">課程開發區</button>
+    <button class="tab-btn" data-tab="knowledge">知識擴充草稿區</button>
   </div>
 
   <section class="section active" id="databaseSection">
@@ -108,6 +127,7 @@ th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
           <div class="actions-row">
             <button class="btn soft small" id="clearSelectionBtn">清空選擇</button>
             <button class="btn green small" id="recommendToolsBtn">推薦工具</button>
+            <button class="btn small" id="fillVideoFromSelectionBtn">帶入長片三層</button>
           </div>
         </div>
 
@@ -149,7 +169,7 @@ th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
     <div class="klm-grid">
       <div class="panel">
         <h3 style="margin-top:0;">NotebookLM 資料包</h3>
-        <div class="small-text">先複製資料包貼到 NotebookLM，再複製任務指令。長文任務建議分兩段：先產大綱，再擴寫 3000 字。</div>
+        <div class="small-text">先複製資料包貼到 NotebookLM，再依模板中心內容複製任務指令。長文建議先出結構，再擴寫 3000 字。</div>
         <div class="prompt-actions">
           <button class="btn" id="copyDataPackBtn">複製資料包</button>
           <button class="btn secondary" id="openKlmBtn">開啟 NotebookLM</button>
@@ -159,21 +179,184 @@ th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0;">KLM 任務指令</h3>
-        <div class="small-text">任務二已拆成：A. 結構版、B. 3000字擴寫版。這樣比一次要到 3000 字穩。</div>
+        <h3 style="margin-top:0;">KLM 任務輸出</h3>
+        <div class="small-text">這裡會即時顯示模板中心的 5 個任務。模板可編輯、可儲存、可覆蓋。</div>
         <div class="prompt-grid" id="promptGrid"></div>
       </div>
     </div>
 
     <div class="panel" style="margin-top:14px;">
       <h3 style="margin-top:0;">KLM 結果貼回解析區</h3>
-      <div class="small-text">把 NotebookLM 生成結果貼回來。系統會依欄位數判斷要寫入 long_video / shorts / publish_content。</div>
-      <textarea id="aiResultInput" class="textarea" placeholder="把 KLM 生成結果貼在這裡"></textarea>
+      <div class="form-grid">
+        <select id="parseMode" class="select">
+          <option value="auto">自動判斷</option>
+          <option value="long_video">long_video</option>
+          <option value="shorts">shorts</option>
+          <option value="publish_content">publish_content</option>
+        </select>
+        <select id="parseFormat" class="select">
+          <option value="tab">Tab 分隔</option>
+          <option value="json">JSON</option>
+        </select>
+      </div>
+      <div class="small-text" style="margin:8px 0 0;">回填時優先使用「模式」判斷，不再只靠欄數猜測；若選自動，仍提供欄數比對備援。</div>
+      <textarea id="aiResultInput" class="textarea" placeholder="把 NotebookLM 生成結果貼在這裡"></textarea>
       <div class="actions-row">
         <button class="btn green" id="parseAiResultBtn">解析並寫入</button>
         <button class="btn soft" id="previewAiResultBtn">先預覽解析</button>
       </div>
       <textarea id="aiResultPreview" class="textarea" placeholder="解析預覽" style="margin-top:10px;"></textarea>
+    </div>
+  </section>
+
+  <section class="section" id="templatesSection">
+    <div class="template-layout">
+      <div class="panel">
+        <h3 style="margin-top:0;">模板中心</h3>
+        <div class="template-toolbar">
+          <button class="btn soft small" id="resetTemplatesBtn">還原預設模板</button>
+          <button class="btn green small" id="saveTemplatesBtn">儲存全部模板</button>
+          <button class="btn small" id="rebuildPromptBtn">重建任務輸出</button>
+        </div>
+        <div class="small-text">支援變數：{{data_pack}} / {{topic}} / {{story}} / {{decode}} / {{insight}} / {{tools}} / {{final_text}} / {{style_mode}} / {{emotion_level}} / {{hook_level}}</div>
+        <div class="list-box" id="templateList"></div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0;">模板編輯</h3>
+        <div id="templateEditorEmpty" class="empty">請先選一個模板。</div>
+        <div id="templateEditorWrap" style="display:none;">
+          <div class="form-grid">
+            <div class="full">
+              <label>模板名稱</label>
+              <input id="templateTitleInput" class="input" />
+            </div>
+            <div class="full">
+              <label>模板內容</label>
+              <textarea id="templateContentInput" class="textarea" style="min-height:320px;"></textarea>
+            </div>
+          </div>
+          <div class="actions-row">
+            <button class="btn green" id="saveCurrentTemplateBtn">儲存目前模板</button>
+            <button class="btn soft" id="copyCurrentTemplateBtn">複製渲染後內容</button>
+            <button class="btn secondary" id="previewCurrentTemplateBtn">預覽渲染</button>
+          </div>
+          <textarea id="templatePreviewOutput" class="textarea" style="margin-top:10px;" placeholder="模板預覽"></textarea>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="videoSection">
+    <div class="panel">
+      <h3 style="margin-top:0;">長片三層系統</h3>
+      <div class="small-text">raw 放原始素材與結構想法；optimized 放優化後版本；final 放最後可用版本。保留人工修改，不鎖死。</div>
+      <div class="video-layout" style="margin-top:12px;">
+        <div class="mode-box">
+          <div class="actions-row" style="margin-top:0;margin-bottom:8px;">
+            <span class="badge">raw</span>
+            <button class="btn soft small" id="fillRawBtn">自動帶入</button>
+          </div>
+          <textarea id="rawScript" class="textarea" style="min-height:420px;" placeholder="raw 原始稿"></textarea>
+        </div>
+
+        <div class="mode-box">
+          <div class="actions-row" style="margin-top:0;margin-bottom:8px;">
+            <span class="badge">optimized</span>
+            <button class="btn small" data-optimize="standard">標準優化</button>
+            <button class="btn green small" data-optimize="viral">爆款優化</button>
+            <button class="btn secondary small" data-optimize="healing">療癒優化</button>
+          </div>
+          <textarea id="optimizedScript" class="textarea" style="min-height:420px;" placeholder="optimized 優化稿"></textarea>
+        </div>
+
+        <div class="mode-box">
+          <div class="actions-row" style="margin-top:0;margin-bottom:8px;">
+            <span class="badge">final</span>
+            <button class="btn soft small" id="copyFinalBtn">複製 final</button>
+            <button class="btn green small" id="extractKnowledgeBtn">擷取知識草稿</button>
+          </div>
+          <textarea id="finalScript" class="textarea" style="min-height:420px;" placeholder="final 最終稿"></textarea>
+        </div>
+      </div>
+
+      <div class="split-3" style="margin-top:14px;">
+        <div class="mode-box">
+          <label>長片標題</label>
+          <input id="videoTitleInput" class="input" />
+        </div>
+        <div class="mode-box">
+          <label>核心訊息</label>
+          <input id="videoCoreMessageInput" class="input" />
+        </div>
+        <div class="mode-box">
+          <label>導流工具</label>
+          <input id="videoRedirectToolInput" class="input" />
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn" id="pushFinalToPublishBtn">帶入發布內容</button>
+        <button class="btn green" id="generateShortsFromFinalBtn">用 final 生成 6 支 Shorts</button>
+        <button class="btn soft" id="saveLongVideoDraftBtn">寫入 long_video 草稿</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="shortsSection">
+    <div class="panel">
+      <h3 style="margin-top:0;">Shorts 工作台</h3>
+      <div class="small-text">依任務三與 finalText 生成 6 支 Shorts，支援逐支編修與回填。</div>
+      <div class="actions-row">
+        <button class="btn green" id="generateShortsBtn">生成 6 支 Shorts</button>
+        <button class="btn soft" id="copyAllShortsBtn">複製全部 Shorts</button>
+        <button class="btn" id="saveShortsBtn">寫入 shorts</button>
+      </div>
+      <div id="shortsList" class="list-box" style="margin-top:12px;"></div>
+    </div>
+  </section>
+
+  <section class="section" id="publishSection">
+    <div class="publish-layout">
+      <div class="panel">
+        <h3 style="margin-top:0;">YouTube / IG 發布工作台</h3>
+        <div class="actions-row">
+          <button class="btn green" id="generatePublishBtn">依 final 生成發布內容</button>
+          <button class="btn soft" id="copyPublishBtn">複製發布內容</button>
+          <button class="btn" id="savePublishBtn">寫入 publish_content</button>
+        </div>
+
+        <div class="split-2" style="margin-top:12px;">
+          <div class="mode-box">
+            <label>YouTube 標題</label>
+            <input id="ytTitle" class="input" />
+            <label style="display:block;margin-top:10px;">YouTube 完整文案</label>
+            <textarea id="ytCaption" class="textarea" style="min-height:260px;"></textarea>
+          </div>
+          <div class="mode-box">
+            <label>Instagram 標題</label>
+            <input id="igTitle" class="input" />
+            <label style="display:block;margin-top:10px;">Instagram 完整文案</label>
+            <textarea id="igCaption" class="textarea" style="min-height:260px;"></textarea>
+          </div>
+        </div>
+
+        <div class="split-2" style="margin-top:12px;">
+          <div class="mode-box">
+            <label>Hashtags</label>
+            <textarea id="hashtagsInput" class="textarea" style="min-height:120px;"></textarea>
+          </div>
+          <div class="mode-box">
+            <label>CTA / 導流</label>
+            <textarea id="publishCtaInput" class="textarea" style="min-height:120px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0;">發布預覽</h3>
+        <textarea id="publishPreview" class="textarea" style="min-height:560px;" placeholder="這裡會顯示 YouTube / IG 發布預覽"></textarea>
+      </div>
     </div>
   </section>
 
@@ -247,31 +430,198 @@ th{background:#f4eadc;font-weight:800;color:#54483d;position:sticky;top:0}
       </div>
     </div>
   </section>
+
+  <section class="section" id="knowledgeSection">
+    <div class="knowledge-layout">
+      <div class="panel">
+        <h3 style="margin-top:0;">知識擴充草稿</h3>
+        <div class="small-text">從 finalText 擷取 insight / decode / tags。先進草稿，不自動寫正式庫。</div>
+        <div class="actions-row">
+          <button class="btn green" id="extractKnowledgeBtn2">從 final 擷取</button>
+          <button class="btn soft" id="copyKnowledgeBtn">複製草稿</button>
+          <button class="btn" id="saveKnowledgeDraftBtn">寫入 knowledge_draft</button>
+        </div>
+        <div class="form-grid" style="margin-top:12px;">
+          <textarea id="knowledgeInsight" class="textarea full" placeholder="insight 草稿"></textarea>
+          <textarea id="knowledgeDecode" class="textarea full" placeholder="decode 草稿"></textarea>
+          <textarea id="knowledgeTags" class="textarea full" placeholder="tags 草稿"></textarea>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0;">知識草稿預覽</h3>
+        <div id="knowledgeDraftList" class="list-box"></div>
+      </div>
+    </div>
+  </section>
 </div>
 
 <script>
 const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbz9fZoUvF_qQC_yTjcB31NlBED-8aMl_LnNZU54JZaR8HPDFQIouowF2tdX_8bXG_-a/exec";
-const STORAGE_KEYS = { gasUrl:'ai_factory_gas_url_v1', storyFullText:'ai_factory_story_full_text_v1', selected:'ai_factory_selected_v1' };
+
+const STORAGE_KEYS = {
+  gasUrl:'ai_factory_gas_url_v22_pro',
+  storyFullText:'ai_factory_story_full_text_v22_pro',
+  selected:'ai_factory_selected_v22_pro',
+  templates:'ai_factory_templates_v22_pro',
+  currentTemplate:'ai_factory_current_template_v22_pro',
+  shorts:'ai_factory_shorts_v22_pro',
+  video:'ai_factory_video_v22_pro',
+  publish:'ai_factory_publish_v22_pro',
+  knowledge:'ai_factory_knowledge_v22_pro'
+};
 
 const DB_SOURCES = [
-  { key:'stories', label:'故事庫', action:'getStories' },
-  { key:'emotion', label:'情緒解碼', action:'getEmotion' },
-  { key:'relation', label:'人際解碼', action:'getRelation' },
-  { key:'parenting', label:'教養解碼', action:'getParenting' },
-  { key:'insight', label:'心靈感悟', action:'getInsight' },
-  { key:'tools', label:'工具庫', action:'getTools' },
-  { key:'scenarioToolMap', label:'工具匹配', action:'getScenarioTool' },
-  { key:'scenarioPlan', label:'情境規劃', action:'getScenarioPlan' }
+  { key:'stories', label:'stories_db / 故事庫', action:'getStories' },
+  { key:'emotion', label:'emotion_decode / 情緒解碼', action:'getEmotion' },
+  { key:'relation', label:'relation_decode / 人際解碼', action:'getRelation' },
+  { key:'parenting', label:'parenting_decode / 教養解碼', action:'getParenting' },
+  { key:'insight', label:'insight_library / 心靈感悟', action:'getInsight' },
+  { key:'tools', label:'tools_db / 工具庫', action:'getTools' },
+  { key:'scenarioToolMap', label:'scenario_tool_map / 工具匹配', action:'getScenarioTool' },
+  { key:'scenarioPlan', label:'scenario_plan / 情境規劃', action:'getScenarioPlan' }
 ];
 
-const PROMPTS = [
-  { key:'task1', title:'任務一｜原料提取與主題串接', mode:'single', build:buildTask1Prompt },
-  { key:'task2a', title:'任務二A｜長影片結構版', mode:'single', build:buildTask2APrompt },
-  { key:'task2b', title:'任務二B｜3000字擴寫版', mode:'single', build:buildTask2BPrompt },
-  { key:'task3', title:'任務三｜Shorts 矩陣生成', mode:'single', build:buildTask3Prompt },
-  { key:'task4', title:'任務四｜多平台發布內容', mode:'single', build:buildTask4Prompt },
-  { key:'task5', title:'任務五｜課程規劃與講題開發', mode:'single', build:buildTask5Prompt }
-];
+const DEFAULT_TEMPLATES = {
+  task1: {
+    title: '任務一｜原料提取與主題串接',
+    content: `你現在要做的是【任務一：原料提取與主題串接】。
+
+請只根據我剛提供的資料包，完成以下任務：
+1. 找出最適合的長影片主題
+2. 拆出三個延伸方向：
+- 週二心靈感悟
+- 週四心腦科學
+- 週六教養故事
+3. 建議最適合的導流工具 toolCode
+4. 給出內容定位（偏療癒 / 偏科學 / 偏故事）
+
+補充偏好：
+- 風格傾向：{{style_mode}}
+- 情緒強度：{{emotion_level}}
+- Hook強度：{{hook_level}}
+
+主題參考：{{topic}}
+故事摘要：{{story}}
+解碼摘要：{{decode}}
+感悟摘要：{{insight}}
+工具摘要：{{tools}}
+
+請用清楚段落輸出，不用表格。`
+  },
+  task2a: {
+    title: '任務二A｜長影片結構版',
+    content: `你現在要做的是【任務二A：長影片結構版】。
+
+請根據資料包，先產出長影片完整結構，不要一次擴寫到3000字。
+請先完成：
+1. video_type
+2. video_title
+3. shorts_title
+4. core_message
+5. script_outline（五段：Hook / 情境故事 / 解碼 / 感悟 / 工具導流）
+6. ai_image_prompt
+7. redirect_tool
+8. ai_prompt（供後續擴寫使用）
+9. shorts_prompt
+10. publish_fill_prompt
+
+補充偏好：
+- 風格傾向：{{style_mode}}
+- 情緒強度：{{emotion_level}}
+- Hook強度：{{hook_level}}
+- 主題：{{topic}}
+
+最後請附上一句：
+「下一步請用任務二B擴寫成3000字以上逐字稿」`
+  },
+  task2b: {
+    title: '任務二B｜3000字擴寫版',
+    content: `你現在要做的是【任務二B：3000字擴寫版】。
+
+請根據任務二A已完成的結構，將內容擴寫成【3000字以上】的完整長影片逐字稿。
+
+強制結構：
+1. Hook（開場吸引）
+2. 情境故事
+3. 解碼理解
+4. 感悟升華
+5. 工具導流
+
+強制要求：
+- 字數必須 >= 3000
+- 若未達3000字，請自動補足情境、對話、過渡與感受描寫直到達標
+- 保持故事為主、解碼為輔、感悟升華、工具導流
+- 不要縮成摘要
+
+資料包：
+{{data_pack}}`
+  },
+  task3: {
+    title: '任務三｜Shorts 矩陣生成',
+    content: `你現在要做的是【任務三：Shorts 矩陣生成】。
+
+請根據長影片主題與資料包，生成6支Shorts：
+- 心靈感悟 A / B
+- 心腦科學 A / B
+- 教養故事 A / B
+
+每支都要有：
+1. shorts_type
+2. version
+3. shorts_title
+4. shorts_core_line
+5. hook_3s
+6. story_point
+7. ending_cta
+8. redirect_tool
+
+強制要求：
+- 不要講完整解法
+- 結尾一定導流回長影片
+- Hook 要符合 {{hook_level}} 強度
+- 情緒濃度要符合 {{emotion_level}}
+
+補充資料：
+{{data_pack}}`
+  },
+  task4: {
+    title: '任務四｜多平台發布內容',
+    content: `你現在要做的是【任務四：多平台發布內容】。
+
+請根據長影片與Shorts內容，輸出：
+- YouTube：搜尋導向、標題清楚、結構完整
+- Instagram：共鳴導向、Hashtags較多、故事感更強
+
+請產出：
+1. title
+2. full_caption
+3. short_caption（100字內）
+4. hashtags
+5. cta_redirect
+6. redirect_url
+
+目前 final 文本：
+{{final_text}}`
+  },
+  task5: {
+    title: '任務五｜課程規劃與講題開發',
+    content: `你現在要做的是【任務五：課程規劃與講題開發】。
+
+請把本次資料包內容轉為：
+- 一個可講的課程主題
+- 課程摘要
+- 3個課程目標
+- 12週模組方向
+- 可搭配工具
+- 可延伸作業
+
+資料包如下：
+{{data_pack}}`
+  }
+};
+
+const TEMPLATE_ORDER = ['task1','task2a','task2b','task3','task4','task5'];
 
 const state = {
   gasUrl:'',
@@ -281,7 +631,11 @@ const state = {
   datasets:{},
   weekly:[],
   courses:[],
-  selected:{ story:null, decode:[], insight:[], tool:[], scenarioToolMap:[], scenarioPlan:[] }
+  templates:{},
+  currentTemplateKey:'task1',
+  selected:{ story:null, decode:[], insight:[], tool:[], scenarioToolMap:[], scenarioPlan:[] },
+  shorts:[],
+  knowledgeDrafts:[]
 };
 
 const el = {};
@@ -292,54 +646,92 @@ function init(){
   bindEvents();
   renderDbMenu();
   restoreLocalState();
+  renderTemplateList();
   updateSelectedBox();
   renderCurrentCards();
   renderPromptBoxes();
   rebuildDataPack();
+  renderShortsList();
+  renderKnowledgeDraftList();
+  refreshPublishPreview();
   if(state.gasUrl) testAndLoad();
 }
 
 function cacheElements(){
-  el.gasUrl = document.getElementById('gasUrl');
-  el.gasStatusDot = document.getElementById('gasStatusDot');
-  el.gasStatusText = document.getElementById('gasStatusText');
-  el.dbMenu = document.getElementById('dbMenu');
-  el.cardsContainer = document.getElementById('cardsContainer');
-  el.searchInput = document.getElementById('searchInput');
-  el.selectedBox = document.getElementById('selectedBox');
-  el.storyFullText = document.getElementById('storyFullText');
-  el.promptGrid = document.getElementById('promptGrid');
-  el.dataPackOutput = document.getElementById('dataPackOutput');
-  el.aiResultInput = document.getElementById('aiResultInput');
-  el.aiResultPreview = document.getElementById('aiResultPreview');
-  el.weeklyTableBody = document.getElementById('weeklyTableBody');
-  el.courseTableBody = document.getElementById('courseTableBody');
+  const ids = [
+    'gasUrl','gasStatusDot','gasStatusText','dbMenu','cardsContainer','searchInput','selectedBox','storyFullText','promptGrid',
+    'dataPackOutput','aiResultInput','aiResultPreview','weeklyTableBody','courseTableBody','templateList','templateTitleInput',
+    'templateContentInput','templatePreviewOutput','templateEditorEmpty','templateEditorWrap','rawScript','optimizedScript',
+    'finalScript','videoTitleInput','videoCoreMessageInput','videoRedirectToolInput','shortsList','ytTitle','ytCaption','igTitle',
+    'igCaption','hashtagsInput','publishCtaInput','publishPreview','knowledgeInsight','knowledgeDecode','knowledgeTags',
+    'knowledgeDraftList','weekNo','weekTheme','weekTuesday','weekThursday','weekSaturday','weekTool','weekPriority','weekStatus',
+    'weekLongVideo','weekShorts','courseTitle','courseType','courseAudience','courseDuration','courseCapacity','courseKind',
+    'courseSummary','courseObjectives','courseOutline','courseMaterials','courseNotes','parseMode','parseFormat'
+  ];
+  ids.forEach(id => el[id] = document.getElementById(id));
 }
 
 function bindEvents(){
-  document.getElementById('saveGasBtn').addEventListener('click', saveGasUrl);
-  document.getElementById('testGasBtn').addEventListener('click', testAndLoad);
-  document.getElementById('reloadAllBtn').addEventListener('click', loadAllData);
-  document.getElementById('refreshCurrentBtn').addEventListener('click', refreshCurrentDataset);
-  document.getElementById('clearSelectionBtn').addEventListener('click', clearSelection);
-  document.getElementById('recommendToolsBtn').addEventListener('click', recommendTools);
-  document.getElementById('saveMatchBtn').addEventListener('click', saveMatchSelection);
-  document.getElementById('copyDataPackBtn').addEventListener('click', copyDataPack);
-  document.getElementById('refreshKlmBtn').addEventListener('click', ()=>{ rebuildDataPack(); renderPromptBoxes(); });
-  document.getElementById('openKlmBtn').addEventListener('click', ()=> window.open('https://notebooklm.google/', '_blank'));
-  document.getElementById('previewAiResultBtn').addEventListener('click', previewAiResult);
-  document.getElementById('parseAiResultBtn').addEventListener('click', parseAiResult);
+  $('#saveGasBtn').addEventListener('click', saveGasUrl);
+  $('#testGasBtn').addEventListener('click', testAndLoad);
+  $('#reloadAllBtn').addEventListener('click', loadAllData);
+  $('#refreshCurrentBtn').addEventListener('click', refreshCurrentDataset);
+  $('#clearSelectionBtn').addEventListener('click', clearSelection);
+  $('#recommendToolsBtn').addEventListener('click', recommendTools);
+  $('#saveMatchBtn').addEventListener('click', saveMatchSelection);
+  $('#fillVideoFromSelectionBtn').addEventListener('click', fillVideoFromSelection);
 
-  document.getElementById('fillWeeklyFromSelectionBtn').addEventListener('click', fillWeeklyFromSelection);
-  document.getElementById('saveWeeklyBtn').addEventListener('click', saveWeeklyPlan);
-  document.getElementById('fillCourseFromSelectionBtn').addEventListener('click', fillCourseFromSelection);
-  document.getElementById('saveCourseBtn').addEventListener('click', saveCourseDraft);
+  $('#copyDataPackBtn').addEventListener('click', copyDataPack);
+  $('#refreshKlmBtn').addEventListener('click', ()=>{ rebuildDataPack(); renderPromptBoxes(); });
+  $('#openKlmBtn').addEventListener('click', ()=> window.open('https://notebooklm.google/', '_blank'));
+  $('#previewAiResultBtn').addEventListener('click', previewAiResult);
+  $('#parseAiResultBtn').addEventListener('click', parseAiResult);
+
+  $('#resetTemplatesBtn').addEventListener('click', resetTemplates);
+  $('#saveTemplatesBtn').addEventListener('click', saveAllTemplates);
+  $('#rebuildPromptBtn').addEventListener('click', ()=>{ renderPromptBoxes(); rebuildDataPack(); });
+  $('#saveCurrentTemplateBtn').addEventListener('click', saveCurrentTemplate);
+  $('#copyCurrentTemplateBtn').addEventListener('click', copyCurrentTemplate);
+  $('#previewCurrentTemplateBtn').addEventListener('click', previewCurrentTemplate);
+
+  $('#fillRawBtn').addEventListener('click', fillVideoFromSelection);
+  document.querySelectorAll('[data-optimize]').forEach(btn => btn.addEventListener('click', ()=> optimizeScript(btn.dataset.optimize)));
+  $('#copyFinalBtn').addEventListener('click', ()=> copyText(el.finalScript.value, '已複製 final 稿'));
+  $('#extractKnowledgeBtn').addEventListener('click', extractKnowledgeFromFinal);
+  $('#extractKnowledgeBtn2').addEventListener('click', extractKnowledgeFromFinal);
+  $('#pushFinalToPublishBtn').addEventListener('click', pushFinalToPublish);
+  $('#generateShortsFromFinalBtn').addEventListener('click', generateShorts);
+  $('#saveLongVideoDraftBtn').addEventListener('click', saveLongVideoDraft);
+
+  $('#generateShortsBtn').addEventListener('click', generateShorts);
+  $('#copyAllShortsBtn').addEventListener('click', copyAllShorts);
+  $('#saveShortsBtn').addEventListener('click', saveShortsRows);
+
+  $('#generatePublishBtn').addEventListener('click', generatePublishContent);
+  $('#copyPublishBtn').addEventListener('click', ()=> copyText(buildPublishBundle(), '已複製發布內容'));
+  $('#savePublishBtn').addEventListener('click', savePublishRows);
+
+  $('#fillWeeklyFromSelectionBtn').addEventListener('click', fillWeeklyFromSelection);
+  $('#saveWeeklyBtn').addEventListener('click', saveWeeklyPlan);
+  $('#fillCourseFromSelectionBtn').addEventListener('click', fillCourseFromSelection);
+  $('#saveCourseBtn').addEventListener('click', saveCourseDraft);
+
+  $('#copyKnowledgeBtn').addEventListener('click', ()=> copyText(buildKnowledgeBundle(), '已複製知識草稿'));
+  $('#saveKnowledgeDraftBtn').addEventListener('click', saveKnowledgeDraft);
 
   el.searchInput.addEventListener('input', renderCurrentCards);
   el.storyFullText.addEventListener('input', ()=>{
     localStorage.setItem(STORAGE_KEYS.storyFullText, el.storyFullText.value);
-    rebuildDataPack();
-    renderPromptBoxes();
+    rebuildDataPack(); renderPromptBoxes();
+  });
+  ['rawScript','optimizedScript','finalScript','videoTitleInput','videoCoreMessageInput','videoRedirectToolInput'].forEach(key=>{
+    el[key].addEventListener('input', persistVideoState);
+  });
+  ['ytTitle','ytCaption','igTitle','igCaption','hashtagsInput','publishCtaInput'].forEach(key=>{
+    el[key].addEventListener('input', ()=>{ persistPublishState(); refreshPublishPreview(); });
+  });
+  ['knowledgeInsight','knowledgeDecode','knowledgeTags'].forEach(key=>{
+    el[key].addEventListener('input', persistKnowledgeState);
   });
 
   document.querySelectorAll('.tab-btn').forEach(btn=>{
@@ -351,14 +743,75 @@ function restoreLocalState(){
   state.gasUrl = localStorage.getItem(STORAGE_KEYS.gasUrl) || DEFAULT_GAS_URL;
   el.gasUrl.value = state.gasUrl;
   el.storyFullText.value = localStorage.getItem(STORAGE_KEYS.storyFullText) || '';
-  const raw = localStorage.getItem(STORAGE_KEYS.selected);
-  if(raw){
-    try{ state.selected = Object.assign(state.selected, JSON.parse(raw)); }catch(e){}
+  const selectedRaw = localStorage.getItem(STORAGE_KEYS.selected);
+  if(selectedRaw){ try{ state.selected = Object.assign(state.selected, JSON.parse(selectedRaw)); }catch(e){} }
+
+  const templateRaw = localStorage.getItem(STORAGE_KEYS.templates);
+  state.templates = clone(DEFAULT_TEMPLATES);
+  if(templateRaw){ try{ state.templates = Object.assign(clone(DEFAULT_TEMPLATES), JSON.parse(templateRaw)); }catch(e){} }
+  state.currentTemplateKey = localStorage.getItem(STORAGE_KEYS.currentTemplate) || 'task1';
+
+  const shortsRaw = localStorage.getItem(STORAGE_KEYS.shorts);
+  if(shortsRaw){ try{ state.shorts = JSON.parse(shortsRaw) || []; }catch(e){} }
+
+  const videoRaw = localStorage.getItem(STORAGE_KEYS.video);
+  if(videoRaw){
+    try{
+      const v = JSON.parse(videoRaw);
+      el.rawScript.value = v.raw || '';
+      el.optimizedScript.value = v.optimized || '';
+      el.finalScript.value = v.final || '';
+      el.videoTitleInput.value = v.title || '';
+      el.videoCoreMessageInput.value = v.core || '';
+      el.videoRedirectToolInput.value = v.redirectTool || '';
+    }catch(e){}
   }
+
+  const publishRaw = localStorage.getItem(STORAGE_KEYS.publish);
+  if(publishRaw){
+    try{
+      const p = JSON.parse(publishRaw);
+      el.ytTitle.value = p.ytTitle || '';
+      el.ytCaption.value = p.ytCaption || '';
+      el.igTitle.value = p.igTitle || '';
+      el.igCaption.value = p.igCaption || '';
+      el.hashtagsInput.value = p.hashtags || '';
+      el.publishCtaInput.value = p.cta || '';
+    }catch(e){}
+  }
+
+  const knowledgeRaw = localStorage.getItem(STORAGE_KEYS.knowledge);
+  if(knowledgeRaw){
+    try{
+      const k = JSON.parse(knowledgeRaw);
+      el.knowledgeInsight.value = k.insight || '';
+      el.knowledgeDecode.value = k.decode || '';
+      el.knowledgeTags.value = k.tags || '';
+      state.knowledgeDrafts = k.drafts || [];
+    }catch(e){}
+  }
+  renderTemplateEditor();
 }
 
-function persistSelection(){
-  localStorage.setItem(STORAGE_KEYS.selected, JSON.stringify(state.selected));
+function persistSelection(){ localStorage.setItem(STORAGE_KEYS.selected, JSON.stringify(state.selected)); }
+function persistTemplates(){ localStorage.setItem(STORAGE_KEYS.templates, JSON.stringify(state.templates)); }
+function persistVideoState(){
+  localStorage.setItem(STORAGE_KEYS.video, JSON.stringify({
+    raw: el.rawScript.value, optimized: el.optimizedScript.value, final: el.finalScript.value,
+    title: el.videoTitleInput.value, core: el.videoCoreMessageInput.value, redirectTool: el.videoRedirectToolInput.value
+  }));
+}
+function persistShortsState(){ localStorage.setItem(STORAGE_KEYS.shorts, JSON.stringify(state.shorts)); }
+function persistPublishState(){
+  localStorage.setItem(STORAGE_KEYS.publish, JSON.stringify({
+    ytTitle: el.ytTitle.value, ytCaption: el.ytCaption.value, igTitle: el.igTitle.value, igCaption: el.igCaption.value,
+    hashtags: el.hashtagsInput.value, cta: el.publishCtaInput.value
+  }));
+}
+function persistKnowledgeState(){
+  localStorage.setItem(STORAGE_KEYS.knowledge, JSON.stringify({
+    insight: el.knowledgeInsight.value, decode: el.knowledgeDecode.value, tags: el.knowledgeTags.value, drafts: state.knowledgeDrafts
+  }));
 }
 
 function saveGasUrl(){
@@ -372,7 +825,7 @@ async function testAndLoad(){
   setStatus(false, '測試連線中...');
   try{
     const ping = await apiGet('ping');
-    if(!ping.ok) throw new Error('ping failed');
+    if(!ping || ping.ok === false) throw new Error(ping?.error || 'ping failed');
     state.connectionOk = true;
     setStatus(true, 'GAS 連線成功');
     await loadAllData();
@@ -392,12 +845,10 @@ async function loadAllData(){
   try{
     for(const src of DB_SOURCES){
       const res = await apiGet(src.action);
-      state.datasets[src.key] = Array.isArray(res.data) ? res.data : [];
+      state.datasets[src.key] = normalizeArrayResponse(res);
     }
-    const weekly = await apiGet('getWeeklyPlan');
-    state.weekly = Array.isArray(weekly.data) ? weekly.data : [];
-    const courses = await apiGet('getCourses');
-    state.courses = Array.isArray(courses.data) ? courses.data : [];
+    state.weekly = normalizeArrayResponse(await apiGet('getWeeklyPlan'));
+    state.courses = normalizeArrayResponse(await apiGet('getCourses'));
     renderCurrentCards();
     updateSelectedBox();
     renderPromptBoxes();
@@ -413,7 +864,7 @@ async function refreshCurrentDataset(){
   const src = DB_SOURCES.find(x=>x.key===state.activeDbKey);
   if(!src || !state.gasUrl) return;
   const res = await apiGet(src.action);
-  state.datasets[src.key] = Array.isArray(res.data) ? res.data : [];
+  state.datasets[src.key] = normalizeArrayResponse(res);
   renderCurrentCards();
 }
 
@@ -430,6 +881,14 @@ function apiPost(payload){
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload)
   }).then(r=>r.json());
+}
+
+function normalizeArrayResponse(res){
+  if(Array.isArray(res)) return res;
+  if(Array.isArray(res.data)) return res.data;
+  if(Array.isArray(res.items)) return res.items;
+  if(Array.isArray(res.rows)) return res.rows;
+  return [];
 }
 
 function renderDbMenu(){
@@ -479,15 +938,13 @@ function buildCard(item, sourceKey){
   return card;
 }
 
-function getItemTitle(item){
-  return item.title || item.subtitle || item.topic || item.tool_name || item.id || '未命名';
-}
+function getItemTitle(item){ return item.title || item.subtitle || item.topic || item.tool_name || item.id || item.story_id || '未命名'; }
 function getItemDesc(item, sourceKey){
   return item.summary || item.content || item.parenting_insight || item.life_example || item.description || item.core_function || item.notes || `資料來源：${sourceKey}`;
 }
 function getItemTags(item){
-  const raw = item.tags || item.theme_group || item.scenario_type || item.decode_type || item.tool_type || '';
-  return String(raw).split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,5);
+  const raw = item.tags || item.theme_group || item.scenario_type || item.decode_type || item.tool_type || item.emotion_type || '';
+  return String(raw).split(/[,，]/).map(s=>s.trim()).filter(Boolean).slice(0,6);
 }
 function getItemMeta(item){
   const arr = [];
@@ -496,7 +953,8 @@ function getItemMeta(item){
   if(item.tool_main) arr.push('主工具：' + item.tool_main);
   if(item.priority) arr.push('優先：' + item.priority);
   if(item.video_type) arr.push(item.video_type);
-  return arr.slice(0,4);
+  if(item.scenario_type) arr.push('情境：' + item.scenario_type);
+  return arr.slice(0,5);
 }
 
 function selectItem(sourceKey, item){
@@ -581,14 +1039,15 @@ function recommendTools(){
   if(!target) return alert('目前選擇裡沒有可對應的情境類型');
   const maps = state.datasets.scenarioToolMap || [];
   const toolsDb = state.datasets.tools || [];
-  const hit = maps.filter(x=> String(x.scenario_type || '').trim() === target);
+  const hit = maps.filter(x=> [x.scenario_type, x.theme_group, x.emotion_type].some(v=> String(v || '').trim() === target));
   if(!hit.length) return alert('工具匹配表中找不到對應情境：' + target);
 
   hit.forEach(map=>{
-    [map.tool_main, map.tool_sub, map.tool_extend].filter(Boolean).forEach(code=>{
+    [map.tool_main, map.tool_sub, map.tool_extend, map.preferred_tool].filter(Boolean).forEach(code=>{
       const found = toolsDb.find(t=> String(t.toolCode || t.tool_code || t.id || '').trim() === String(code).trim());
       if(found) pushUnique('tool', found);
     });
+    pushUnique('scenarioToolMap', map);
   });
 
   persistSelection();
@@ -601,31 +1060,25 @@ function recommendTools(){
 async function saveMatchSelection(){
   if(!state.connectionOk) return alert('請先連上 GAS');
   if(!state.selected.story) return alert('請先選故事');
-
   const row = {
-    story_id: state.selected.story.id || '',
+    story_id: state.selected.story.id || state.selected.story.story_id || '',
     title: getItemTitle(state.selected.story),
-    content: state.selected.story.summary || '',
+    content: state.selected.story.summary || state.selected.story.content || '',
     emotion_type: state.selected.story.emotion_type || state.selected.story.scenario_type || '',
     tags: state.selected.story.tags || '',
     target: 'PWA匹配',
     decode_type: state.selected.decode.map(getItemTitle).join('｜'),
-    tool_ids: state.selected.tool.map(x=>x.toolCode || x.tool_code || '').join(','),
+    tool_ids: state.selected.tool.map(x=>x.toolCode || x.tool_code || x.id || '').join(','),
     insight_ids: state.selected.insight.map(x=>x.id || x.serial_no || '').join(','),
-    note: '由 PWA v2.0 寫入'
+    note: '由 PWA v2.2 PRO 寫入'
   };
-
-  const res = await apiPost({ action:'saveMatchSelection', row });
-  if(res.ok){
-    state.selected.story = Object.assign({}, state.selected.story || {}, row);
-    persistSelection();
-    updateSelectedBox();
-    rebuildDataPack();
-    renderPromptBoxes();
-    switchMainTab('klm');
+  try{
+    const res = await apiPost({ action:'saveMatchSelection', row });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已存匹配，並帶入 NotebookLM 工作台');
-  }else{
-    alert('寫入失敗：' + (res.error || '未知錯誤'));
+    switchMainTab('klm');
+  }catch(err){
+    alert('寫入失敗：' + err.message);
   }
 }
 
@@ -637,7 +1090,6 @@ function buildDataPack(){
   const maps = state.selected.scenarioToolMap;
   const plans = state.selected.scenarioPlan;
   const storyText = el.storyFullText.value.trim();
-
   const sections = [];
   sections.push('【內容主軸｜故事】');
   if(story){
@@ -653,7 +1105,6 @@ function buildDataPack(){
   } else {
     sections.push('（尚未選故事）');
   }
-
   sections.push('\n--------------------------------------------------\n');
   sections.push('【解碼層】');
   if(decodes.length){
@@ -725,226 +1176,540 @@ function buildDataPack(){
 
   sections.push('\n--------------------------------------------------\n');
   sections.push('【生成偏好】');
-  sections.push(`生成模式：${document.getElementById('genMode').value}`);
-  sections.push(`風格傾向：${document.getElementById('styleMode').value}`);
-  sections.push(`情緒強度：${document.getElementById('emotionLevel').value}`);
-  sections.push(`Hook強度：${document.getElementById('hookLevel').value}`);
-
+  sections.push(`生成模式：${$('#genMode').value}`);
+  sections.push(`風格傾向：${$('#styleMode').value}`);
+  sections.push(`情緒強度：${$('#emotionLevel').value}`);
+  sections.push(`Hook強度：${$('#hookLevel').value}`);
   return sections.join('\n');
 }
 
-function rebuildDataPack(){
-  el.dataPackOutput.value = buildDataPack();
-}
+function rebuildDataPack(){ el.dataPackOutput.value = buildDataPack(); }
 
 async function copyDataPack(){
   rebuildDataPack();
-  await navigator.clipboard.writeText(el.dataPackOutput.value);
-  alert('已複製 NotebookLM 資料包');
+  await copyText(el.dataPackOutput.value, '已複製 NotebookLM 資料包');
+}
+
+function getTemplateVariables(){
+  return {
+    '{{data_pack}}': buildDataPack(),
+    '{{topic}}': state.selected.story ? getItemTitle(state.selected.story) : '',
+    '{{story}}': state.selected.story ? (state.selected.story.summary || state.selected.story.content || '') : '',
+    '{{decode}}': state.selected.decode.map(d => `${getItemTitle(d)}：${getItemDesc(d,'decode')}`).join('\n'),
+    '{{insight}}': state.selected.insight.map(x => `${getItemTitle(x)}：${getItemDesc(x,'insight')}`).join('\n'),
+    '{{tools}}': state.selected.tool.map(t => `${getItemTitle(t)}：${getItemDesc(t,'tools')}`).join('\n'),
+    '{{final_text}}': el.finalScript.value || '',
+    '{{style_mode}}': $('#styleMode').value,
+    '{{emotion_level}}': $('#emotionLevel').value,
+    '{{hook_level}}': $('#hookLevel').value
+  };
+}
+
+function renderTemplate(templateKey){
+  const tpl = state.templates[templateKey];
+  if(!tpl) return '';
+  let output = tpl.content || '';
+  const vars = getTemplateVariables();
+  Object.entries(vars).forEach(([key, value])=>{
+    output = output.split(key).join(value || '');
+  });
+  return output;
 }
 
 function renderPromptBoxes(){
   el.promptGrid.innerHTML = '';
-  PROMPTS.forEach(item=>{
+  TEMPLATE_ORDER.forEach(key=>{
+    const tpl = state.templates[key];
+    const prompt = renderTemplate(key);
     const box = document.createElement('div');
     box.className = 'prompt-box';
-    const prompt = item.build();
     box.innerHTML = `
-      <h3 style="margin:0 0 8px;">${item.title}</h3>
+      <h3 style="margin:0 0 8px;">${escapeHtml(tpl.title)}</h3>
       <div class="prompt-actions">
-        <button class="btn small" data-copy="${item.key}">一鍵複製</button>
+        <button class="btn small" data-copy-prompt="${key}">一鍵複製</button>
+        <button class="btn soft small" data-open-template="${key}">去模板中心</button>
       </div>
-      <textarea id="${item.key}" class="textarea">${escapeHtml(prompt)}</textarea>
+      <textarea id="prompt_${key}" class="textarea">${escapeHtml(prompt)}</textarea>
     `;
     el.promptGrid.appendChild(box);
   });
 
-  el.promptGrid.querySelectorAll('[data-copy]').forEach(btn=>{
+  el.promptGrid.querySelectorAll('[data-copy-prompt]').forEach(btn=>{
     btn.addEventListener('click', async()=>{
-      const id = btn.getAttribute('data-copy');
-      await navigator.clipboard.writeText(document.getElementById(id).value);
-      const original = btn.textContent;
-      btn.textContent = '已複製';
-      setTimeout(()=> btn.textContent = original, 1200);
+      const key = btn.getAttribute('data-copy-prompt');
+      await copyText(renderTemplate(key), '已複製任務模板');
+    });
+  });
+  el.promptGrid.querySelectorAll('[data-open-template]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.currentTemplateKey = btn.getAttribute('data-open-template');
+      localStorage.setItem(STORAGE_KEYS.currentTemplate, state.currentTemplateKey);
+      renderTemplateList();
+      renderTemplateEditor();
+      switchMainTab('templates');
     });
   });
 }
 
-function commonBrief(){
-  const story = state.selected.story;
-  return {
-    weekNo: document.getElementById('weekNo').value.trim(),
-    contentId: story?.id ? `W${(document.getElementById('weekNo').value || '01').replace(/\D/g,'')}-${story.id}` : '',
-    storyTitle: story?.title || '',
-    style: document.getElementById('styleMode').value,
-    emotion: document.getElementById('emotionLevel').value,
-    hook: document.getElementById('hookLevel').value
+function renderTemplateList(){
+  el.templateList.innerHTML = '';
+  TEMPLATE_ORDER.forEach(key=>{
+    const item = document.createElement('div');
+    item.className = 'template-item' + (key === state.currentTemplateKey ? ' active' : '');
+    item.innerHTML = `<strong>${escapeHtml(state.templates[key].title)}</strong><div class="small-text code">${key}</div>`;
+    item.addEventListener('click', ()=>{
+      state.currentTemplateKey = key;
+      localStorage.setItem(STORAGE_KEYS.currentTemplate, state.currentTemplateKey);
+      renderTemplateList();
+      renderTemplateEditor();
+    });
+    el.templateList.appendChild(item);
+  });
+}
+
+function renderTemplateEditor(){
+  const tpl = state.templates[state.currentTemplateKey];
+  if(!tpl){
+    el.templateEditorEmpty.style.display = '';
+    el.templateEditorWrap.style.display = 'none';
+    return;
+  }
+  el.templateEditorEmpty.style.display = 'none';
+  el.templateEditorWrap.style.display = '';
+  el.templateTitleInput.value = tpl.title || '';
+  el.templateContentInput.value = tpl.content || '';
+  el.templatePreviewOutput.value = renderTemplate(state.currentTemplateKey);
+}
+
+function saveCurrentTemplate(){
+  if(!state.currentTemplateKey) return;
+  state.templates[state.currentTemplateKey] = {
+    title: el.templateTitleInput.value.trim() || state.templates[state.currentTemplateKey].title,
+    content: el.templateContentInput.value
   };
+  persistTemplates();
+  renderTemplateList();
+  renderTemplateEditor();
+  renderPromptBoxes();
+  alert('已儲存目前模板');
 }
 
-function buildTask1Prompt(){
-  const c = commonBrief();
-  return `你現在要做的是【任務一：原料提取與主題串接】。
-
-請只根據我剛提供的資料包，完成以下任務：
-1. 找出最適合的長影片主題
-2. 拆出三個延伸方向：
-- 週二心靈感悟
-- 週四心腦科學
-- 週六教養故事
-3. 建議最適合的導流工具 toolCode
-4. 給出內容定位（偏療癒 / 偏科學 / 偏故事）
-
-補充偏好：
-- 風格傾向：${c.style}
-- 情緒強度：${c.emotion}
-- Hook強度：${c.hook}
-
-請用清楚段落輸出，不用表格。`;
+function saveAllTemplates(){
+  persistTemplates();
+  renderPromptBoxes();
+  alert('已儲存全部模板');
 }
 
-function buildTask2APrompt(){
-  const c = commonBrief();
-  return `你現在要做的是【任務二A：長影片結構版】。
-
-請根據資料包，先產出長影片完整結構，不要一次擴寫到3000字。
-請先完成：
-1. video_type
-2. video_title
-3. shorts_title
-4. core_message
-5. script_outline（五段：Hook / 情境故事 / 解碼 / 感悟 / 工具導流）
-6. ai_image_prompt
-7. redirect_tool
-8. ai_prompt（供後續擴寫使用）
-9. shorts_prompt
-10. publish_fill_prompt
-
-補充偏好：
-- 內容ID：${c.contentId}
-- 風格傾向：${c.style}
-- 情緒強度：${c.emotion}
-- Hook強度：${c.hook}
-
-請最後另外附上一句：
-「下一步請用任務二B擴寫成3000字以上逐字稿」`;
+function previewCurrentTemplate(){
+  el.templatePreviewOutput.value = renderTemplate(state.currentTemplateKey);
 }
 
-function buildTask2BPrompt(){
-  const c = commonBrief();
-  return `你現在要做的是【任務二B：3000字擴寫版】。
-
-請根據任務二A已完成的結構，將內容擴寫成【3000字以上】的完整長影片逐字稿。
-
-強制結構：
-1. Hook（開場吸引）
-2. 情境故事
-3. 解碼理解
-4. 感悟升華
-5. 工具導流
-
-強制要求：
-- 字數必須 >= 3000
-- 若未達3000字，請自動補足情境、對話、過渡與感受描寫直到達標
-- 保持故事為主、解碼為輔、感悟升華、工具導流
-- 不要縮成摘要
-
-補充偏好：
-- 風格傾向：${c.style}
-- 情緒強度：${c.emotion}
-- Hook強度：${c.hook}`;
+async function copyCurrentTemplate(){
+  await copyText(renderTemplate(state.currentTemplateKey), '已複製渲染後模板');
 }
 
-function buildTask3Prompt(){
-  const c = commonBrief();
-  return `你現在要做的是【任務三：Shorts 矩陣生成】。
-
-請根據長影片主題與資料包，生成6支Shorts：
-- 心靈感悟 A / B
-- 心腦科學 A / B
-- 教養故事 A / B
-
-每支都要有：
-1. shorts_type
-2. version
-3. shorts_title
-4. shorts_core_line
-5. hook_3s
-6. story_point
-7. ending_cta
-8. redirect_tool
-
-強制要求：
-- 不要講完整解法
-- 結尾一定導流回長影片
-- Hook 要符合 ${c.hook} 強度
-- 情緒濃度要符合 ${c.emotion}`;
+function resetTemplates(){
+  if(!confirm('要還原為預設模板嗎？')) return;
+  state.templates = clone(DEFAULT_TEMPLATES);
+  persistTemplates();
+  renderTemplateList();
+  renderTemplateEditor();
+  renderPromptBoxes();
 }
 
-function buildTask4Prompt(){
-  return `你現在要做的是【任務四：多平台發布內容】。
-
-請根據長影片與Shorts內容，輸出：
-- YouTube：搜尋導向、標題清楚、結構完整
-- Instagram：共鳴導向、Hashtags較多、故事感更強
-
-請產出：
-1. title
-2. full_caption
-3. short_caption（100字內）
-4. hashtags
-5. cta_redirect
-6. redirect_url`;
+function fillVideoFromSelection(){
+  const story = state.selected.story;
+  const decodeText = state.selected.decode.map(d=>`【解碼】${getItemTitle(d)}：${getItemDesc(d,'decode')}`).join('\n');
+  const insightText = state.selected.insight.map(x=>`【感悟】${getItemTitle(x)}：${getItemDesc(x,'insight')}`).join('\n');
+  const toolText = state.selected.tool.map(t=>`【工具】${getItemTitle(t)}：${getItemDesc(t,'tools')}`).join('\n');
+  const raw = [
+    story ? `【故事】${getItemTitle(story)}\n${story.summary || story.content || ''}` : '【故事】（尚未選故事）',
+    decodeText || '【解碼】（尚未選擇）',
+    insightText || '【感悟】（尚未選擇）',
+    toolText || '【工具】（尚未選擇）',
+    el.storyFullText.value.trim() ? `【補充原文】\n${el.storyFullText.value.trim()}` : ''
+  ].filter(Boolean).join('\n\n');
+  el.rawScript.value = raw;
+  el.videoTitleInput.value = story ? getItemTitle(story) : '';
+  el.videoCoreMessageInput.value = state.selected.insight[0] ? getItemTitle(state.selected.insight[0]) : '';
+  el.videoRedirectToolInput.value = state.selected.tool[0] ? (state.selected.tool[0].toolCode || state.selected.tool[0].tool_code || state.selected.tool[0].id || getItemTitle(state.selected.tool[0])) : '';
+  persistVideoState();
+  switchMainTab('video');
 }
 
-function buildTask5Prompt(){
-  return `你現在要做的是【任務五：課程規劃與講題開發】。
+function optimizeScript(mode){
+  const raw = el.rawScript.value.trim();
+  if(!raw) return alert('請先帶入或輸入 raw 內容');
+  const title = el.videoTitleInput.value.trim();
+  const storyName = state.selected.story ? getItemTitle(state.selected.story) : '這個主題';
+  let prefix = '';
+  if(mode === 'viral') prefix = '【爆款優化版】\n用更強 Hook、對比感與情緒張力重寫，但仍保留溫度。\n';
+  else if(mode === 'healing') prefix = '【療癒優化版】\n用更柔和、陪伴、安定的語氣重寫，讓人被理解。\n';
+  else prefix = '【標準優化版】\n整理結構、提升可讀性與說服力。\n';
 
-請把本次資料包內容轉為：
-- 一個可講的課程主題
-- 課程摘要
-- 3個課程目標
-- 12週模組方向
-- 可搭配工具
-- 可延伸作業`;
+  const optimized = [
+    prefix,
+    `標題建議：${title || storyName}`,
+    `核心訊息：${el.videoCoreMessageInput.value.trim() || storyName}`,
+    '',
+    '一、開場 Hook',
+    makeHook(mode, storyName),
+    '',
+    '二、情境故事',
+    raw.slice(0, 800),
+    '',
+    '三、解碼理解',
+    summarizeText(state.selected.decode.map(getItemDesc).join('\n') || raw, 280),
+    '',
+    '四、感悟升華',
+    summarizeText(state.selected.insight.map(getItemDesc).join('\n') || '從被理解走向看懂自己，讓關係有空間。', 220),
+    '',
+    '五、工具導流',
+    buildToolCTA()
+  ].join('\n');
+  el.optimizedScript.value = optimized;
+  if(!el.finalScript.value.trim()) el.finalScript.value = optimized;
+  persistVideoState();
 }
 
-function switchMainTab(tab){
-  state.activeTab = tab;
-  document.querySelectorAll('.tab-btn').forEach(btn=> btn.classList.toggle('active', btn.dataset.tab === tab));
-  document.querySelectorAll('.section').forEach(sec=> sec.classList.remove('active'));
-  document.getElementById(tab + 'Section').classList.add('active');
+function makeHook(mode, title){
+  if(mode === 'viral') return `你以為是孩子難帶，其實很多時候，是大人的心先累了。今天我們就用「${title}」把這件事看清楚。`;
+  if(mode === 'healing') return `如果你最近也有點撐不住，也許不是你不夠好，而是你太久沒有被理解。今天想陪你用「${title}」慢慢看懂。`;
+  return `今天想跟你聊聊「${title}」，不是要你立刻做到，而是讓你先看懂，心就會先鬆一點。`;
 }
 
-function previewAiResult(){
-  const raw = el.aiResultInput.value.trim();
-  if(!raw) return alert('請先貼上內容');
-  const preview = parseTabRows(raw);
-  el.aiResultPreview.value = JSON.stringify(preview, null, 2);
+function summarizeText(text, limit=250){
+  const s = String(text || '').replace(/\s+/g,' ').trim();
+  return s.length <= limit ? s : s.slice(0, limit) + '…';
+}
+
+function buildToolCTA(){
+  const tool = state.selected.tool[0];
+  if(!tool) return '如果你也想把這個轉成生活中真正用得上的方法，可以到工具區找一個最適合你的練習開始。';
+  return `${tool.tool_name || getItemTitle(tool)}（${tool.toolCode || tool.tool_code || ''}）：${tool.tool_one_liner || tool.core_function || ''}\n${tool.long_video_cta || tool.cta_template || ''}`;
+}
+
+function extractKnowledgeFromFinal(){
+  const finalText = el.finalScript.value.trim() || el.optimizedScript.value.trim() || el.rawScript.value.trim();
+  if(!finalText) return alert('目前沒有 final / optimized / raw 內容可擷取');
+  const insight = deriveInsight(finalText);
+  const decode = deriveDecode(finalText);
+  const tags = deriveTags(finalText).join(', ');
+  el.knowledgeInsight.value = insight;
+  el.knowledgeDecode.value = decode;
+  el.knowledgeTags.value = tags;
+  state.knowledgeDrafts.unshift({
+    created_at: new Date().toISOString(),
+    insight, decode, tags
+  });
+  state.knowledgeDrafts = state.knowledgeDrafts.slice(0, 20);
+  persistKnowledgeState();
+  renderKnowledgeDraftList();
+  switchMainTab('knowledge');
+}
+
+function deriveInsight(text){
+  const sentences = splitSentences(text);
+  const picks = sentences.filter(s => s.length >= 18).slice(0, 3);
+  return picks.join('\n') || '這篇內容提醒我們：當人被理解，情緒就有機會慢慢鬆開。';
+}
+function deriveDecode(text){
+  const sentences = splitSentences(text);
+  const picks = sentences.filter(s => /因為|其實|所以|當|如果/.test(s)).slice(0, 3);
+  return picks.join('\n') || '可能的解碼方向：情緒不是突然爆發，而是累積後找不到出口。';
+}
+function deriveTags(text){
+  const seeds = ['情緒','關係','教養','理解','陪伴','修復','安全感','大人先穩','孩子','界線','溝通','心靈感悟','腦科學','故事'];
+  return seeds.filter(tag => text.includes(tag)).slice(0, 10).concat(state.selected.tool.map(t => t.toolCode || t.tool_code || '').filter(Boolean)).filter(unique);
+}
+function splitSentences(text){
+  return String(text || '').split(/[。！？\n]/).map(s=>s.trim()).filter(Boolean);
+}
+
+function renderShortsList(){
+  el.shortsList.innerHTML = '';
+  if(!state.shorts.length){
+    el.shortsList.innerHTML = '<div class="empty">目前還沒有 Shorts 草稿。</div>';
+    return;
+  }
+  state.shorts.forEach((row, idx)=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'short-card';
+    wrap.innerHTML = `
+      <div class="meta"><span class="pill">${escapeHtml(row.shorts_type || 'Shorts')}</span><span class="pill">${escapeHtml(row.version || 'A')}</span></div>
+      <div class="form-grid">
+        <div class="full"><label>標題</label><input class="input" data-short-field="shorts_title" data-idx="${idx}" value="${escapeAttr(row.shorts_title || '')}" /></div>
+        <div><label>核心句</label><input class="input" data-short-field="shorts_core_line" data-idx="${idx}" value="${escapeAttr(row.shorts_core_line || '')}" /></div>
+        <div><label>Hook 3秒</label><input class="input" data-short-field="hook_3s" data-idx="${idx}" value="${escapeAttr(row.hook_3s || '')}" /></div>
+        <div class="full"><label>故事點</label><textarea class="textarea" data-short-field="story_point" data-idx="${idx}" style="min-height:90px;">${escapeHtml(row.story_point || '')}</textarea></div>
+        <div class="full"><label>CTA</label><textarea class="textarea" data-short-field="ending_cta" data-idx="${idx}" style="min-height:80px;">${escapeHtml(row.ending_cta || '')}</textarea></div>
+      </div>
+    `;
+    el.shortsList.appendChild(wrap);
+  });
+  el.shortsList.querySelectorAll('[data-short-field]').forEach(input=>{
+    input.addEventListener('input', ()=>{
+      const idx = Number(input.dataset.idx);
+      const field = input.dataset.shortField;
+      state.shorts[idx][field] = input.value;
+      persistShortsState();
+    });
+  });
+}
+
+function generateShorts(){
+  const finalText = el.finalScript.value.trim() || el.optimizedScript.value.trim() || el.rawScript.value.trim();
+  if(!finalText) return alert('請先準備 final / optimized / raw 內容');
+  const baseTitle = el.videoTitleInput.value.trim() || state.selected.story?.title || '這個主題';
+  const redirectTool = el.videoRedirectToolInput.value.trim();
+  const types = [
+    { shorts_type:'心靈感悟', version:'A' },
+    { shorts_type:'心靈感悟', version:'B' },
+    { shorts_type:'心腦科學', version:'A' },
+    { shorts_type:'心腦科學', version:'B' },
+    { shorts_type:'教養故事', version:'A' },
+    { shorts_type:'教養故事', version:'B' }
+  ];
+  const snippets = splitSentences(finalText);
+  state.shorts = types.map((t, i)=>({
+    long_video_id: '',
+    shorts_type: t.shorts_type,
+    version: t.version,
+    shorts_title: `${baseTitle}｜${t.shorts_type}${t.version}`,
+    shorts_core_line: snippets[i] || `${baseTitle} 的一個關鍵提醒`,
+    hook_3s: buildShortHook(t.shorts_type, i),
+    story_point: snippets.slice(i, i+3).join('，') || summarizeText(finalText, 80),
+    ending_cta: `${redirectTool ? '想更完整理解，可以回到長片，並搭配工具 ' + redirectTool + ' 練習。' : '想更完整理解，可以回到長片繼續看。'}`,
+    redirect_tool: redirectTool,
+    publish_status: '未發布',
+    ai_prompt: '',
+    copy_storage: '',
+    revised_copy: '',
+    shorts_url: '',
+    long_video_url: '',
+    performance_metric: ''
+  }));
+  persistShortsState();
+  renderShortsList();
+  switchMainTab('shorts');
+}
+
+function buildShortHook(type, idx){
+  const hooks = {
+    '心靈感悟': ['你不是太脆弱，是撐太久了。','很多時候，不是你做不好，是你太久沒被理解。'],
+    '心腦科學': ['情緒爆掉前，大腦其實早就有訊號。','孩子不是故意難搞，常常是大腦先失衡。'],
+    '教養故事': ['那天一句話，讓整個關係變了。','很多教養衝突，不是當下那件小事。']
+  };
+  const list = hooks[type] || ['先看懂，關係才會開始鬆開。'];
+  return list[idx % list.length];
+}
+
+function copyAllShorts(){
+  if(!state.shorts.length) return alert('目前沒有 Shorts');
+  const text = state.shorts.map((row, i)=>[
+    `【${i+1}】${row.shorts_title}`,
+    `Hook：${row.hook_3s}`,
+    `核心句：${row.shorts_core_line}`,
+    `故事點：${row.story_point}`,
+    `CTA：${row.ending_cta}`
+  ].join('\n')).join('\n\n-----------------\n\n');
+  copyText(text, '已複製全部 Shorts');
+}
+
+async function saveShortsRows(){
+  if(!state.connectionOk) return alert('請先連上 GAS');
+  if(!state.shorts.length) return alert('目前沒有 Shorts');
+  try{
+    const rows = state.shorts.map(row=> clone(row));
+    const res = await apiPost({ action:'saveShorts', rows });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
+    alert('已寫入 shorts');
+  }catch(err){
+    alert('寫入失敗：' + err.message);
+  }
+}
+
+function pushFinalToPublish(){
+  generatePublishContent();
+  switchMainTab('publish');
+}
+
+function generatePublishContent(){
+  const title = el.videoTitleInput.value.trim() || state.selected.story?.title || '這支影片';
+  const core = el.videoCoreMessageInput.value.trim() || '先看懂，再慢慢練';
+  const finalText = el.finalScript.value.trim() || el.optimizedScript.value.trim() || el.rawScript.value.trim();
+  if(!finalText) return alert('請先準備 final / optimized / raw 內容');
+
+  const ytCaption = [
+    `${title}`,
+    '',
+    `這支影片想陪你一起看懂：${core}`,
+    '',
+    summarizeText(finalText, 800),
+    '',
+    buildToolCTA(),
+    '',
+    '如果這支影片也說中了你正在經歷的狀態，歡迎收藏、分享，也回到長片完整看。'
+  ].join('\n');
+
+  const igCaption = [
+    `${title}`,
+    '',
+    summarizeText(finalText, 360),
+    '',
+    '有時候不是我們不努力，而是太久沒有被理解。',
+    buildToolCTA()
+  ].join('\n');
+
+  el.ytTitle.value = title;
+  el.igTitle.value = title;
+  el.ytCaption.value = ytCaption;
+  el.igCaption.value = igCaption;
+  el.hashtagsInput.value = deriveTags(finalText).map(x=>'#'+x.replace(/\s+/g,'')).join(' ');
+  el.publishCtaInput.value = buildToolCTA();
+  persistPublishState();
+  refreshPublishPreview();
+}
+
+function refreshPublishPreview(){
+  el.publishPreview.value = buildPublishBundle();
+}
+function buildPublishBundle(){
+  return [
+    '【YouTube】',
+    el.ytTitle.value || '',
+    '',
+    el.ytCaption.value || '',
+    '',
+    '【Instagram】',
+    el.igTitle.value || '',
+    '',
+    el.igCaption.value || '',
+    '',
+    '【Hashtags】',
+    el.hashtagsInput.value || '',
+    '',
+    '【CTA】',
+    el.publishCtaInput.value || ''
+  ].join('\n');
+}
+
+async function savePublishRows(){
+  if(!state.connectionOk) return alert('請先連上 GAS');
+  const contentId = buildContentId();
+  const rows = [
+    {
+      content_id: contentId,
+      platform: 'YouTube',
+      title: el.ytTitle.value.trim(),
+      full_caption: el.ytCaption.value.trim(),
+      short_caption: summarizeText(el.ytCaption.value.trim(), 100),
+      hashtags: el.hashtagsInput.value.trim(),
+      cta_redirect: el.publishCtaInput.value.trim(),
+      redirect_url: '',
+      publish_status: '未發布',
+      video_url: '',
+      best_performing_copy: '',
+      publish_date: ''
+    },
+    {
+      content_id: contentId,
+      platform: 'Instagram',
+      title: el.igTitle.value.trim(),
+      full_caption: el.igCaption.value.trim(),
+      short_caption: summarizeText(el.igCaption.value.trim(), 100),
+      hashtags: el.hashtagsInput.value.trim(),
+      cta_redirect: el.publishCtaInput.value.trim(),
+      redirect_url: '',
+      publish_status: '未發布',
+      video_url: '',
+      best_performing_copy: '',
+      publish_date: ''
+    }
+  ];
+  try{
+    const res = await apiPost({ action:'savePublishContent', rows });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
+    alert('已寫入 publish_content');
+  }catch(err){
+    alert('寫入失敗：' + err.message);
+  }
+}
+
+async function saveLongVideoDraft(){
+  if(!state.connectionOk) return alert('請先連上 GAS');
+  const row = {
+    week_no: el.weekNo.value.trim() || '',
+    video_type: 'long_video',
+    content_id: buildContentId(),
+    video_title: el.videoTitleInput.value.trim(),
+    shorts_title: state.shorts[0]?.shorts_title || '',
+    core_message: el.videoCoreMessageInput.value.trim(),
+    script_outline: el.rawScript.value.trim(),
+    ai_image_prompt: '',
+    image_prompt_storage: '',
+    redirect_tool: el.videoRedirectToolInput.value.trim(),
+    publish_status: '未發布',
+    ai_prompt: renderTemplate('task2a'),
+    ai_long_copy: el.finalScript.value.trim() || el.optimizedScript.value.trim(),
+    copy_storage: '',
+    video_url: '',
+    shorts_urls: '',
+    revised_copy: el.finalScript.value.trim(),
+    shorts_prompt: renderTemplate('task3'),
+    publish_fill_prompt: renderTemplate('task4')
+  };
+  try{
+    const res = await apiPost({ action:'saveLongVideo', mode:'append', row });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
+    alert('已寫入 long_video 草稿');
+  }catch(err){
+    alert('寫入失敗：' + err.message);
+  }
+}
+
+function buildContentId(){
+  const week = (el.weekNo.value.trim() || 'W00').toUpperCase();
+  const storyId = state.selected.story?.id || state.selected.story?.story_id || 'MANUAL';
+  return `${week}-${storyId}`;
 }
 
 function parseTabRows(raw){
   const lines = raw.split(/\r?\n/).filter(x=>x.trim());
   return lines.map(line=>line.split('\t'));
 }
+function safeJsonParse(text){
+  try{ return JSON.parse(text); }catch(e){ return null; }
+}
 
-async function parseAiResult(){
-  if(!state.connectionOk) return alert('請先連上 GAS');
+function previewAiResult(){
   const raw = el.aiResultInput.value.trim();
   if(!raw) return alert('請先貼上內容');
+  const mode = el.parseMode.value;
+  const format = el.parseFormat.value;
+  const result = parseInputToRows(raw, mode, format, false);
+  el.aiResultPreview.value = JSON.stringify(result, null, 2);
+}
 
-  const rows = parseTabRows(raw);
-  if(!rows.length) return alert('沒有可解析內容');
+function parseInputToRows(raw, mode, format, forWrite){
+  const requestedMode = mode || 'auto';
+  if(format === 'json'){
+    const data = safeJsonParse(raw);
+    if(!data) throw new Error('JSON 格式解析失敗');
+    let rows = Array.isArray(data) ? data : (data.rows || data.data || []);
+    if(!Array.isArray(rows)) rows = [data];
+    const resolved = requestedMode === 'auto' ? inferModeFromJson(rows) : requestedMode;
+    return { action: modeToAction(resolved), mode: resolved, count: rows.length, mapped: rows };
+  }
 
-  const validRows = rows.filter(cols=> cols.length >= 10);
-  if(!validRows.length) return alert('格式看起來不對，至少要是 Tab 分隔。');
+  const validRows = parseTabRows(raw).filter(cols=> cols.length >= 5);
+  if(!validRows.length) throw new Error('格式看起來不對，至少要是 Tab 分隔。');
 
-  let action = '';
+  const resolved = requestedMode === 'auto' ? inferModeFromColumns(validRows[0].length) : requestedMode;
+  if(!resolved) throw new Error('目前只支援 long_video / shorts / publish_content');
+
   let mapped = [];
-
-  const firstLen = validRows[0].length;
-  if(firstLen === 19){
-    action = 'saveLongVideo';
+  if(resolved === 'long_video'){
     mapped = validRows.map(cols=>({
       week_no: cols[0] || '', video_type: cols[1] || '', content_id: cols[2] || '', video_title: cols[3] || '',
       shorts_title: cols[4] || '', core_message: cols[5] || '', script_outline: cols[6] || '', ai_image_prompt: cols[7] || '',
@@ -953,8 +1718,7 @@ async function parseAiResult(){
       video_url: cols[14] || '', shorts_urls: cols[15] || '', revised_copy: cols[16] || '',
       shorts_prompt: cols[17] || '', publish_fill_prompt: cols[18] || ''
     }));
-  } else if(firstLen === 16){
-    action = 'saveShorts';
+  } else if(resolved === 'shorts'){
     mapped = validRows.map(cols=>({
       long_video_id: cols[0] || '', shorts_type: cols[1] || '', version: cols[2] || '', shorts_title: cols[3] || '',
       shorts_core_line: cols[4] || '', hook_3s: cols[5] || '', story_point: cols[6] || '', ending_cta: cols[7] || '',
@@ -962,29 +1726,54 @@ async function parseAiResult(){
       copy_storage: cols[11] || '', revised_copy: cols[12] || '', shorts_url: cols[13] || '',
       long_video_url: cols[14] || '', performance_metric: cols[15] || ''
     }));
-  } else if(firstLen === 12){
-    action = 'savePublishContent';
+  } else if(resolved === 'publish_content'){
     mapped = validRows.map(cols=>({
       content_id: cols[0] || '', platform: cols[1] || '', title: cols[2] || '', full_caption: cols[3] || '',
       short_caption: cols[4] || '', hashtags: cols[5] || '', cta_redirect: cols[6] || '',
       redirect_url: cols[7] || '', publish_status: cols[8] || '未發布', video_url: cols[9] || '',
       best_performing_copy: cols[10] || '', publish_date: cols[11] || ''
     }));
-  } else {
-    return alert('目前只支援 19欄(long_video) / 16欄(shorts) / 12欄(publish_content)');
   }
+  return { action: modeToAction(resolved), mode: resolved, count:mapped.length, mapped };
+}
 
-  el.aiResultPreview.value = JSON.stringify({ action, count:mapped.length, mapped }, null, 2);
+function inferModeFromColumns(len){
+  if(len >= 19) return 'long_video';
+  if(len >= 16) return 'shorts';
+  if(len >= 12) return 'publish_content';
+  return '';
+}
+function inferModeFromJson(rows){
+  const sample = rows[0] || {};
+  if('video_title' in sample || 'ai_long_copy' in sample) return 'long_video';
+  if('shorts_title' in sample || 'hook_3s' in sample) return 'shorts';
+  if('platform' in sample || 'full_caption' in sample) return 'publish_content';
+  return 'publish_content';
+}
+function modeToAction(mode){
+  if(mode === 'long_video') return 'saveLongVideo';
+  if(mode === 'shorts') return 'saveShorts';
+  if(mode === 'publish_content') return 'savePublishContent';
+  return '';
+}
 
+async function parseAiResult(){
+  if(!state.connectionOk) return alert('請先連上 GAS');
+  const raw = el.aiResultInput.value.trim();
+  if(!raw) return alert('請先貼上內容');
   try{
-    if(action === 'saveLongVideo'){
-      for(const row of mapped) await apiPost({ action:'saveLongVideo', mode:'append', row });
-    }else if(action === 'saveShorts'){
-      await apiPost({ action:'saveShorts', rows:mapped });
-    }else if(action === 'savePublishContent'){
-      await apiPost({ action:'savePublishContent', rows:mapped });
+    const parsed = parseInputToRows(raw, el.parseMode.value, el.parseFormat.value, true);
+    el.aiResultPreview.value = JSON.stringify(parsed, null, 2);
+    if(parsed.mode === 'long_video'){
+      for(const row of parsed.mapped) await apiPost({ action:'saveLongVideo', mode:'append', row });
+    }else if(parsed.mode === 'shorts'){
+      await apiPost({ action:'saveShorts', rows:parsed.mapped });
+    }else if(parsed.mode === 'publish_content'){
+      await apiPost({ action:'savePublishContent', rows:parsed.mapped });
+    }else{
+      throw new Error('無法判斷回填模式');
     }
-    alert(`已寫入 ${action}，共 ${mapped.length} 列`);
+    alert(`已寫入 ${parsed.action}，共 ${parsed.mapped.length} 列`);
   }catch(err){
     alert('寫入失敗：' + err.message);
   }
@@ -1016,38 +1805,39 @@ function fillWeeklyFromSelection(){
   const decode = state.selected.decode[0];
   const insight = state.selected.insight[0];
   const tool = state.selected.tool[0];
-
-  document.getElementById('weekTuesday').value = insight ? getItemTitle(insight) : '';
-  document.getElementById('weekThursday').value = decode ? getItemTitle(decode) : '';
-  document.getElementById('weekSaturday').value = story ? getItemTitle(story) : '';
-  document.getElementById('weekTheme').value = story ? getItemTitle(story) : (decode ? getItemTitle(decode) : '');
-  document.getElementById('weekTool').value = tool ? (tool.toolCode || tool.tool_code || tool.id || getItemTitle(tool)) : '';
-  document.getElementById('weekStatus').value = '未發布';
+  el.weekTuesday.value = insight ? getItemTitle(insight) : '';
+  el.weekThursday.value = decode ? getItemTitle(decode) : '';
+  el.weekSaturday.value = story ? getItemTitle(story) : '';
+  el.weekTheme.value = story ? getItemTitle(story) : (decode ? getItemTitle(decode) : '');
+  el.weekTool.value = tool ? (tool.toolCode || tool.tool_code || tool.id || getItemTitle(tool)) : '';
+  el.weekStatus.value = '未發布';
+  el.weekLongVideo.value = el.finalScript.value.trim() || el.optimizedScript.value.trim() || '';
+  el.weekShorts.value = state.shorts.map(x=>x.shorts_title).join('\n');
 }
 
 async function saveWeeklyPlan(){
   if(!state.connectionOk) return alert('請先連上 GAS');
   const row = {
-    week_no: document.getElementById('weekNo').value.trim(),
-    weekly_theme: document.getElementById('weekTheme').value.trim(),
-    tue_insight: document.getElementById('weekTuesday').value.trim(),
-    thu_brain_science: document.getElementById('weekThursday').value.trim(),
-    sat_story: document.getElementById('weekSaturday').value.trim(),
-    story_ids: state.selected.story?.id || '',
-    redirect_tool: document.getElementById('weekTool').value.trim(),
-    video_priority: document.getElementById('weekPriority').value.trim(),
-    long_video_script: document.getElementById('weekLongVideo').value.trim(),
-    shorts_generation: document.getElementById('weekShorts').value.trim(),
-    publish_status: document.getElementById('weekStatus').value.trim() || '未發布'
+    week_no: el.weekNo.value.trim(),
+    weekly_theme: el.weekTheme.value.trim(),
+    tue_insight: el.weekTuesday.value.trim(),
+    thu_brain_science: el.weekThursday.value.trim(),
+    sat_story: el.weekSaturday.value.trim(),
+    story_ids: state.selected.story?.id || state.selected.story?.story_id || '',
+    redirect_tool: el.weekTool.value.trim(),
+    video_priority: el.weekPriority.value.trim(),
+    long_video_script: el.weekLongVideo.value.trim(),
+    shorts_generation: el.weekShorts.value.trim(),
+    publish_status: el.weekStatus.value.trim() || '未發布'
   };
-  const res = await apiPost({ action:'saveWeeklyPlan', row });
-  if(res.ok){
+  try{
+    const res = await apiPost({ action:'saveWeeklyPlan', row });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已寫入 weekly_plan');
-    const weekly = await apiGet('getWeeklyPlan');
-    state.weekly = Array.isArray(weekly.data) ? weekly.data : [];
+    state.weekly = normalizeArrayResponse(await apiGet('getWeeklyPlan'));
     renderWeeklyTable();
-  }else{
-    alert('寫入失敗：' + (res.error || '未知錯誤'));
+  }catch(err){
+    alert('寫入失敗：' + err.message);
   }
 }
 
@@ -1075,69 +1865,136 @@ function fillCourseFromSelection(){
   const decodeTitles = state.selected.decode.map(getItemTitle).join('、');
   const insightTitles = state.selected.insight.map(getItemTitle).join('、');
   const toolCodes = state.selected.tool.map(x=>x.toolCode || x.tool_code || x.id || getItemTitle(x)).join('、');
-
-  document.getElementById('courseTitle').value = story ? `從「${getItemTitle(story)}」談情緒理解與關係修復` : '';
-  document.getElementById('courseType').value = '12週課程';
-  document.getElementById('courseAudience').value = '家長 / 教育工作者';
-  document.getElementById('courseDuration').value = '720';
-  document.getElementById('courseCapacity').value = '30';
-  document.getElementById('courseKind').value = '線上或混合';
-  document.getElementById('courseSummary').value = '以故事、解碼、心靈感悟與工具為核心，帶領學員從情緒理解走到關係修復與實際應用。';
-  document.getElementById('courseObjectives').value = '1. 理解故事背後的情緒與心理機制\n2. 學會用教養解碼看懂衝突\n3. 練習把工具帶入生活情境';
-  document.getElementById('courseOutline').value = `主故事：${story ? getItemTitle(story) : ''}\n解碼：${decodeTitles}\n感悟：${insightTitles}\n工具：${toolCodes}`;
-  document.getElementById('courseMaterials').value = `來源素材：故事庫、解碼庫、心靈感悟庫、工具庫\n補充原文：${el.storyFullText.value.trim() || '無'}`;
-  document.getElementById('courseNotes').value = '由 PWA v2.0 自動帶入草稿';
+  el.courseTitle.value = story ? `從「${getItemTitle(story)}」談情緒理解與關係修復` : '';
+  el.courseType.value = '12週課程';
+  el.courseAudience.value = '家長 / 教育工作者';
+  el.courseDuration.value = '720';
+  el.courseCapacity.value = '30';
+  el.courseKind.value = '線上或混合';
+  el.courseSummary.value = '以故事、解碼、心靈感悟與工具為核心，帶領學員從情緒理解走到關係修復與實際應用。';
+  el.courseObjectives.value = '1. 理解故事背後的情緒與心理機制\n2. 學會用教養解碼看懂衝突\n3. 練習把工具帶入生活情境';
+  el.courseOutline.value = `主故事：${story ? getItemTitle(story) : ''}\n解碼：${decodeTitles}\n感悟：${insightTitles}\n工具：${toolCodes}`;
+  el.courseMaterials.value = `來源素材：故事庫、解碼庫、心靈感悟庫、工具庫\n補充原文：${el.storyFullText.value.trim() || '無'}`;
+  el.courseNotes.value = '由 PWA v2.2 PRO 自動帶入草稿';
 }
 
 async function saveCourseDraft(){
   if(!state.connectionOk) return alert('請先連上 GAS');
   const row = {
     id: 'COURSE-' + Date.now(),
-    title: document.getElementById('courseTitle').value.trim(),
-    type: document.getElementById('courseType').value.trim(),
+    title: el.courseTitle.value.trim(),
+    type: el.courseType.value.trim(),
     status: 'draft',
     version: 'v1',
     owner: 'PWA',
-    audience: document.getElementById('courseAudience').value.trim(),
-    duration_min: document.getElementById('courseDuration').value.trim(),
-    capacity: document.getElementById('courseCapacity').value.trim(),
+    audience: el.courseAudience.value.trim(),
+    duration_min: el.courseDuration.value.trim(),
+    capacity: el.courseCapacity.value.trim(),
     tags: [state.selected.story?.tags || '', state.selected.decode.map(x=>x.tags || '').join(',')].filter(Boolean).join(','),
-    summary: document.getElementById('courseSummary').value.trim(),
-    objectives: document.getElementById('courseObjectives').value.trim(),
-    outline: document.getElementById('courseOutline').value.trim(),
-    materials: document.getElementById('courseMaterials').value.trim(),
+    summary: el.courseSummary.value.trim(),
+    objectives: el.courseObjectives.value.trim(),
+    outline: el.courseOutline.value.trim(),
+    materials: el.courseMaterials.value.trim(),
     links: '',
     assets: '',
-    notes: document.getElementById('courseNotes').value.trim(),
+    notes: el.courseNotes.value.trim(),
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
-    kind: document.getElementById('courseKind').value.trim(),
+    kind: el.courseKind.value.trim(),
     kind_other: '',
     schedule_mode: 'module',
     module_sessions: '12',
     session_minutes: '60',
     single_duration: '60'
   };
-  const res = await apiPost({ action:'saveCourseDraft', mode:'append', row });
-  if(res.ok){
+  try{
+    const res = await apiPost({ action:'saveCourseDraft', mode:'append', row });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已寫入 course_db');
-    const courses = await apiGet('getCourses');
-    state.courses = Array.isArray(courses.data) ? courses.data : [];
+    state.courses = normalizeArrayResponse(await apiGet('getCourses'));
     renderCourseTable();
-  }else{
-    alert('寫入失敗：' + (res.error || '未知錯誤'));
+  }catch(err){
+    alert('寫入失敗：' + err.message);
   }
+}
+
+function buildKnowledgeBundle(){
+  return [
+    '【insight】',
+    el.knowledgeInsight.value || '',
+    '',
+    '【decode】',
+    el.knowledgeDecode.value || '',
+    '',
+    '【tags】',
+    el.knowledgeTags.value || ''
+  ].join('\n');
+}
+
+function renderKnowledgeDraftList(){
+  el.knowledgeDraftList.innerHTML = '';
+  if(!state.knowledgeDrafts.length){
+    el.knowledgeDraftList.innerHTML = '<div class="empty">目前沒有知識草稿歷史。</div>';
+    return;
+  }
+  state.knowledgeDrafts.forEach((item, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'draft-card';
+    div.innerHTML = `
+      <div class="meta"><span class="pill">${escapeHtml(item.created_at || '')}</span></div>
+      <div class="small-text"><strong>Insight</strong><br>${escapeHtml(item.insight || '')}</div>
+      <div class="small-text" style="margin-top:8px;"><strong>Decode</strong><br>${escapeHtml(item.decode || '')}</div>
+      <div class="small-text" style="margin-top:8px;"><strong>Tags</strong><br>${escapeHtml(String(item.tags || ''))}</div>
+    `;
+    el.knowledgeDraftList.appendChild(div);
+  });
+}
+
+async function saveKnowledgeDraft(){
+  if(!state.connectionOk) return alert('請先連上 GAS');
+  const row = {
+    created_at: new Date().toISOString(),
+    content_id: buildContentId(),
+    insight: el.knowledgeInsight.value.trim(),
+    decode: el.knowledgeDecode.value.trim(),
+    tags: el.knowledgeTags.value.trim(),
+    final_text: el.finalScript.value.trim()
+  };
+  try{
+    const res = await apiPost({ action:'saveKnowledgeDraft', row });
+    if(res.ok === false) throw new Error(res.error || '未知錯誤');
+    alert('已寫入 knowledge_draft');
+  }catch(err){
+    alert('你的 GAS 可能還沒有 saveKnowledgeDraft action。前端草稿已保留，本次未寫入正式後端。');
+  }
+}
+
+function switchMainTab(tab){
+  state.activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(btn=> btn.classList.toggle('active', btn.dataset.tab === tab));
+  document.querySelectorAll('.section').forEach(sec=> sec.classList.remove('active'));
+  const target = document.getElementById(tab + 'Section');
+  if(target) target.classList.add('active');
 }
 
 function escapeHtml(value){
   return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+function escapeAttr(value){ return escapeHtml(value).replace(/\n/g, '&#10;'); }
+function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
+function unique(v, i, arr){ return arr.indexOf(v) === i; }
+function $(sel){ return document.getElementById(sel); }
+async function copyText(text, okText='已複製'){
+  if(!text) return alert('目前沒有內容可複製');
+  try{
+    await navigator.clipboard.writeText(text);
+    alert(okText);
+  }catch(e){
+    alert('複製失敗，請手動複製');
+  }
 }
 </script>
 </body>
 </html>
-
