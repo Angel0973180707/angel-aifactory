@@ -468,7 +468,8 @@ const STORAGE_KEYS = {
   shorts:'ai_factory_shorts_v22_pro',
   video:'ai_factory_video_v22_pro',
   publish:'ai_factory_publish_v22_pro',
-  knowledge:'ai_factory_knowledge_v22_pro'
+  knowledge:'ai_factory_knowledge_v22_pro',
+  dataCache:'ai_factory_data_cache_v22_pro'
 };
 
 const DB_SOURCES = [
@@ -635,7 +636,9 @@ const state = {
   currentTemplateKey:'task1',
   selected:{ story:null, decode:[], insight:[], tool:[], scenarioToolMap:[], scenarioPlan:[] },
   shorts:[],
-  knowledgeDrafts:[]
+  knowledgeDrafts:[],
+  dataCache:{},
+  pendingLoads:{}
 };
 
 const el = {};
@@ -675,7 +678,7 @@ function bindEvents(){
   // FIX: Use document.getElementById directly instead of the broken $() shorthand
   document.getElementById('saveGasBtn').addEventListener('click', saveGasUrl);
   document.getElementById('testGasBtn').addEventListener('click', testAndLoad);
-  document.getElementById('reloadAllBtn').addEventListener('click', loadAllData);
+  document.getElementById('reloadAllBtn').addEventListener('click', forceReloadAllData);
   document.getElementById('refreshCurrentBtn').addEventListener('click', refreshCurrentDataset);
   document.getElementById('clearSelectionBtn').addEventListener('click', clearSelection);
   document.getElementById('recommendToolsBtn').addEventListener('click', recommendTools);
@@ -791,6 +794,15 @@ function restoreLocalState(){
       state.knowledgeDrafts = k.drafts || [];
     }catch(e){}
   }
+
+  const cacheRaw = localStorage.getItem(STORAGE_KEYS.dataCache);
+  if(cacheRaw){
+    try{
+      state.dataCache = JSON.parse(cacheRaw) || {};
+    }catch(e){
+      state.dataCache = {};
+    }
+  }
   renderTemplateEditor();
 }
 
@@ -815,6 +827,10 @@ function persistKnowledgeState(){
   }));
 }
 
+function persistDataCache(){
+  localStorage.setItem(STORAGE_KEYS.dataCache, JSON.stringify(state.dataCache));
+}
+
 function saveGasUrl(){
   state.gasUrl = el.gasUrl.value.trim();
   localStorage.setItem(STORAGE_KEYS.gasUrl, state.gasUrl);
@@ -825,13 +841,24 @@ function saveGasUrl(){
 async function gasGet(action, extra={}){
   const url = new URL(state.gasUrl);
   url.searchParams.set('action', action);
-  Object.entries(extra).forEach(([k,v])=> url.searchParams.set(k,v));
-  const res = await fetch(url.toString(), {
-    method: 'GET',
-    redirect: 'follow'
+  Object.entries(extra).forEach(([k,v])=>{
+    if(v !== undefined && v !== null && v !== '') url.searchParams.set(k,v);
   });
-  const text = await res.text();
-  try { return JSON.parse(text); } catch(e) { throw new Error('GAS 回傳非 JSON：' + text.slice(0, 200)); }
+
+  const controller = new AbortController();
+  const timer = setTimeout(()=> controller.abort(), 15000);
+
+  try{
+    const res = await fetch(url.toString(), {
+      method: 'GET',
+      redirect: 'follow',
+      signal: controller.signal
+    });
+    const text = await res.text();
+    try { return JSON.parse(text); } catch(e) { throw new Error('GAS 回傳非 JSON：' + text.slice(0, 200)); }
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function gasPost(payload){
@@ -853,7 +880,7 @@ async function testAndLoad(){
     if(!ping || ping.ok === false) throw new Error(ping?.error || 'ping failed');
     state.connectionOk = true;
     setStatus(true, 'GAS 連線成功');
-    await loadAllData();
+    await loadInitialData();
   }catch(err){
     state.connectionOk = false;
     setStatus(false, '連線失敗：' + err.message);
@@ -865,31 +892,138 @@ function setStatus(ok, text){
   el.gasStatusDot.className = 'dot' + (ok === true ? ' ok' : ok === false ? ' bad' : '');
 }
 
-async function loadAllData(){
+function getSourceLimit(key){
+  const map = {
+    stories: 80,
+    emotion: 80,
+    relation: 80,
+    parenting: 80,
+    insight: 120,
+    tools: 80,
+    scenarioToolMap: 80,
+    scenarioPlan: 80,
+    weekly: 80,
+    courses: 80
+  };
+  return map[key] || 80;
+}
+
+function getCacheKey(key){
+  return 'dataset:' + key;
+}
+
+function getCachedDataset(key, maxAgeMs=180000){
+  const entry = state.dataCache[getCacheKey(key)];
+  if(!entry) return null;
+  if(Date.now() - Number(entry.ts || 0) > maxAgeMs) return null;
+  return Array.isArray(entry.data) ? entry.data : null;
+}
+
+function setCachedDataset(key, data){
+  state.dataCache[getCacheKey(key)] = {
+    ts: Date.now(),
+    data: Array.isArray(data) ? data : []
+  };
+  persistDataCache();
+}
+
+async function loadDataset(key, options={}){
+  const src = DB_SOURCES.find(x=>x.key===key);
+  if(!src || !state.gasUrl) return [];
+
+  const preferCache = options.preferCache !== false;
+  if(!options.force && Array.isArray(state.datasets[key]) && state.datasets[key].length){
+    return state.datasets[key];
+  }
+
+  if(preferCache && !options.force){
+    const cached = getCachedDataset(key);
+    if(cached){
+      state.datasets[key] = cached;
+      return cached;
+    }
+  }
+
+  if(state.pendingLoads[key]) return state.pendingLoads[key];
+
+  state.pendingLoads[key] = (async ()=>{
+    const res = await gasGet(src.action, { limit: getSourceLimit(key) });
+    const rows = normalizeArrayResponse(res);
+    state.datasets[key] = rows;
+    setCachedDataset(key, rows);
+    delete state.pendingLoads[key];
+    return rows;
+  })().catch(err=>{
+    delete state.pendingLoads[key];
+    throw err;
+  });
+
+  return state.pendingLoads[key];
+}
+
+async function loadWeeklyData(options={}){
+  if(!options.force && state.weekly.length) return state.weekly;
+  if(!options.force){
+    const cached = getCachedDataset('weekly');
+    if(cached){ state.weekly = cached; return cached; }
+  }
+  const res = await gasGet('getWeeklyPlan', { limit: getSourceLimit('weekly') });
+  state.weekly = normalizeArrayResponse(res);
+  setCachedDataset('weekly', state.weekly);
+  return state.weekly;
+}
+
+async function loadCoursesData(options={}){
+  if(!options.force && state.courses.length) return state.courses;
+  if(!options.force){
+    const cached = getCachedDataset('courses');
+    if(cached){ state.courses = cached; return cached; }
+  }
+  const res = await gasGet('getCourses', { limit: getSourceLimit('courses') });
+  state.courses = normalizeArrayResponse(res);
+  setCachedDataset('courses', state.courses);
+  return state.courses;
+}
+
+async function preloadLightData(){
+  const keys = ['insight','stories','tools'];
+  await Promise.all(keys.map(async key=>{
+    try{ await loadDataset(key, { preferCache:true }); }catch(e){}
+  }));
+}
+
+async function loadInitialData(){
   if(!state.gasUrl) return;
   try{
-    for(const src of DB_SOURCES){
-      const res = await gasGet(src.action);
-      state.datasets[src.key] = normalizeArrayResponse(res);
-    }
-    state.weekly = normalizeArrayResponse(await gasGet('getWeeklyPlan'));
-    state.courses = normalizeArrayResponse(await gasGet('getCourses'));
+    await loadDataset(state.activeDbKey || 'stories', { preferCache:true });
     renderCurrentCards();
     updateSelectedBox();
     renderPromptBoxes();
     rebuildDataPack();
-    renderWeeklyTable();
-    renderCourseTable();
+    refreshPublishPreview();
+    preloadLightData();
   }catch(err){
     setStatus(false, '載入資料失敗：' + err.message);
   }
 }
 
+async function loadAllData(){
+  await loadInitialData();
+}
+
+async function forceReloadAllData(){
+  state.datasets = {};
+  state.weekly = [];
+  state.courses = [];
+  state.dataCache = {};
+  persistDataCache();
+  await loadInitialData();
+}
+
 async function refreshCurrentDataset(){
   const src = DB_SOURCES.find(x=>x.key===state.activeDbKey);
   if(!src || !state.gasUrl) return;
-  const res = await gasGet(src.action);
-  state.datasets[src.key] = normalizeArrayResponse(res);
+  await loadDataset(src.key, { force:true, preferCache:false });
   renderCurrentCards();
 }
 
@@ -911,9 +1045,10 @@ function renderDbMenu(){
     const btn = document.createElement('button');
     btn.className = 'side-btn' + (src.key === state.activeDbKey ? ' active' : '');
     btn.textContent = src.label;
-    btn.addEventListener('click', ()=>{
+    btn.addEventListener('click', async ()=>{
       state.activeDbKey = src.key;
       renderDbMenu();
+      await loadDataset(src.key, { preferCache:true });
       renderCurrentCards();
     });
     el.dbMenu.appendChild(btn);
@@ -925,8 +1060,12 @@ function renderCurrentCards(){
   const q = (el.searchInput.value || '').trim().toLowerCase();
   const filtered = list.filter(item=> JSON.stringify(item).toLowerCase().includes(q));
   el.cardsContainer.innerHTML = '';
+  if(!list.length){
+    el.cardsContainer.innerHTML = '<div class="empty">目前分頁尚未載入資料，可切換分頁或按重整目前分頁。</div>';
+    return;
+  }
   if(!filtered.length){
-    el.cardsContainer.innerHTML = '<div class="empty">目前沒有資料，或尚未連上 GAS。</div>';
+    el.cardsContainer.innerHTML = '<div class="empty">有資料，但目前搜尋條件沒有結果。</div>';
     return;
   }
   filtered.forEach(item=> el.cardsContainer.appendChild(buildCard(item, state.activeDbKey)));
@@ -1949,7 +2088,8 @@ async function saveWeeklyPlan(){
     const res = await apiPost({ action:'saveWeeklyPlan', row });
     if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已寫入 weekly_plan');
-    state.weekly = normalizeArrayResponse(await gasGet('getWeeklyPlan'));
+    state.weekly = normalizeArrayResponse(await gasGet('getWeeklyPlan', { limit: getSourceLimit('weekly') }));
+    setCachedDataset('weekly', state.weekly);
     renderWeeklyTable();
   }catch(err){
     alert('寫入失敗：' + err.message);
@@ -2026,7 +2166,8 @@ async function saveCourseDraft(){
     const res = await apiPost({ action:'saveCourseDraft', mode:'append', row });
     if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已寫入 course_db');
-    state.courses = normalizeArrayResponse(await gasGet('getCourses'));
+    state.courses = normalizeArrayResponse(await gasGet('getCourses', { limit: getSourceLimit('courses') }));
+    setCachedDataset('courses', state.courses);
     renderCourseTable();
   }catch(err){
     alert('寫入失敗：' + err.message);
@@ -2084,12 +2225,23 @@ async function saveKnowledgeDraft(){
   }
 }
 
-function switchMainTab(tab){
+async function switchMainTab(tab){
   state.activeTab = tab;
   document.querySelectorAll('.tab-btn').forEach(btn=> btn.classList.toggle('active', btn.dataset.tab === tab));
   document.querySelectorAll('.section').forEach(sec=> sec.classList.remove('active'));
   const target = document.getElementById(tab + 'Section');
   if(target) target.classList.add('active');
+
+  if(tab === 'database'){
+    await loadDataset(state.activeDbKey, { preferCache:true });
+    renderCurrentCards();
+  } else if(tab === 'weekly'){
+    await loadWeeklyData({ preferCache:true });
+    renderWeeklyTable();
+  } else if(tab === 'courses'){
+    await loadCoursesData({ preferCache:true });
+    renderCourseTable();
+  }
 }
 
 function escapeHtml(value){
