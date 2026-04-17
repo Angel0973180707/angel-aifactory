@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AI 內容工廠 PWA v2.2 PRO</title>
+<title>AI 內容工廠 PWA v2.2 PRO fix-front-load</title>
 <style>
 :root{
   --bg:#f7f3eb;--panel:#fffdf8;--card:#fff;--line:#e7dccd;--text:#3d352d;--muted:#7f7468;
@@ -985,23 +985,49 @@ async function loadCoursesData(options={}){
   return state.courses;
 }
 
-async function preloadLightData(){
-  const keys = ['insight','stories','tools'];
+async function preloadLightData(options={}){
+  const force = !!options.force;
+  const keys = ['insight','stories','tools','emotion','relation','parenting','scenarioToolMap','scenarioPlan'];
   await Promise.all(keys.map(async key=>{
-    try{ await loadDataset(key, { preferCache:true }); }catch(e){}
+    try{
+      await loadDataset(key, { preferCache:!force, force });
+    }catch(e){}
   }));
+
+  try{ await loadWeeklyData({ force }); }catch(e){}
+  try{ await loadCoursesData({ force }); }catch(e){}
 }
 
-async function loadInitialData(){
+function findFirstNonEmptyDatasetKey(){
+  const priority = ['insight','stories','tools','emotion','relation','parenting','scenarioToolMap','scenarioPlan'];
+  for(const key of priority){
+    if(Array.isArray(state.datasets[key]) && state.datasets[key].length) return key;
+  }
+  return state.activeDbKey || 'stories';
+}
+
+async function loadInitialData(options={}){
   if(!state.gasUrl) return;
+  const force = !!options.force;
+
   try{
-    await loadDataset(state.activeDbKey || 'stories', { preferCache:true });
+    await preloadLightData({ force });
+
+    const activeKey = state.activeDbKey || 'stories';
+    if(!state.datasets[activeKey]){
+      await loadDataset(activeKey, { preferCache:!force, force });
+    }
+
+    state.activeDbKey = findFirstNonEmptyDatasetKey();
+
+    renderDbMenu();
     renderCurrentCards();
+    renderWeeklyTable();
+    renderCourseTable();
     updateSelectedBox();
     renderPromptBoxes();
     rebuildDataPack();
     refreshPublishPreview();
-    preloadLightData();
   }catch(err){
     setStatus(false, '載入資料失敗：' + err.message);
   }
@@ -1017,7 +1043,7 @@ async function forceReloadAllData(){
   state.courses = [];
   state.dataCache = {};
   persistDataCache();
-  await loadInitialData();
+  await loadInitialData({ force:true });
 }
 
 async function refreshCurrentDataset(){
@@ -1060,14 +1086,26 @@ function renderCurrentCards(){
   const q = (el.searchInput.value || '').trim().toLowerCase();
   const filtered = list.filter(item=> JSON.stringify(item).toLowerCase().includes(q));
   el.cardsContainer.innerHTML = '';
+
   if(!list.length){
-    el.cardsContainer.innerHTML = '<div class="empty">目前分頁尚未載入資料，可切換分頁或按重整目前分頁。</div>';
+    const firstNonEmpty = findFirstNonEmptyDatasetKey();
+    const hasOtherData = firstNonEmpty && firstNonEmpty !== state.activeDbKey && Array.isArray(state.datasets[firstNonEmpty]) && state.datasets[firstNonEmpty].length;
+
+    if(hasOtherData){
+      const src = DB_SOURCES.find(x=>x.key===firstNonEmpty);
+      const label = src ? src.label : firstNonEmpty;
+      el.cardsContainer.innerHTML = '<div class="empty">目前這個分頁沒有資料，系統已偵測到其他分頁有資料：' + label + '。可直接切換查看。</div>';
+    }else{
+      el.cardsContainer.innerHTML = '<div class="empty">目前尚未載入到可顯示資料，可按「重載資料」或切換分頁檢查。</div>';
+    }
     return;
   }
+
   if(!filtered.length){
     el.cardsContainer.innerHTML = '<div class="empty">有資料，但目前搜尋條件沒有結果。</div>';
     return;
   }
+
   filtered.forEach(item=> el.cardsContainer.appendChild(buildCard(item, state.activeDbKey)));
 }
 
