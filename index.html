@@ -672,52 +672,53 @@ function cacheElements(){
 }
 
 function bindEvents(){
-  $('#saveGasBtn').addEventListener('click', saveGasUrl);
-  $('#testGasBtn').addEventListener('click', testAndLoad);
-  $('#reloadAllBtn').addEventListener('click', loadAllData);
-  $('#refreshCurrentBtn').addEventListener('click', refreshCurrentDataset);
-  $('#clearSelectionBtn').addEventListener('click', clearSelection);
-  $('#recommendToolsBtn').addEventListener('click', recommendTools);
-  $('#saveMatchBtn').addEventListener('click', saveMatchSelection);
-  $('#fillVideoFromSelectionBtn').addEventListener('click', fillVideoFromSelection);
+  // FIX: Use document.getElementById directly instead of the broken $() shorthand
+  document.getElementById('saveGasBtn').addEventListener('click', saveGasUrl);
+  document.getElementById('testGasBtn').addEventListener('click', testAndLoad);
+  document.getElementById('reloadAllBtn').addEventListener('click', loadAllData);
+  document.getElementById('refreshCurrentBtn').addEventListener('click', refreshCurrentDataset);
+  document.getElementById('clearSelectionBtn').addEventListener('click', clearSelection);
+  document.getElementById('recommendToolsBtn').addEventListener('click', recommendTools);
+  document.getElementById('saveMatchBtn').addEventListener('click', saveMatchSelection);
+  document.getElementById('fillVideoFromSelectionBtn').addEventListener('click', fillVideoFromSelection);
 
-  $('#copyDataPackBtn').addEventListener('click', copyDataPack);
-  $('#refreshKlmBtn').addEventListener('click', ()=>{ rebuildDataPack(); renderPromptBoxes(); });
-  $('#openKlmBtn').addEventListener('click', ()=> window.open('https://notebooklm.google/', '_blank'));
-  $('#previewAiResultBtn').addEventListener('click', previewAiResult);
-  $('#parseAiResultBtn').addEventListener('click', parseAiResult);
+  document.getElementById('copyDataPackBtn').addEventListener('click', copyDataPack);
+  document.getElementById('refreshKlmBtn').addEventListener('click', ()=>{ rebuildDataPack(); renderPromptBoxes(); });
+  document.getElementById('openKlmBtn').addEventListener('click', ()=> window.open('https://notebooklm.google/', '_blank'));
+  document.getElementById('previewAiResultBtn').addEventListener('click', previewAiResult);
+  document.getElementById('parseAiResultBtn').addEventListener('click', parseAiResult);
 
-  $('#resetTemplatesBtn').addEventListener('click', resetTemplates);
-  $('#saveTemplatesBtn').addEventListener('click', saveAllTemplates);
-  $('#rebuildPromptBtn').addEventListener('click', ()=>{ renderPromptBoxes(); rebuildDataPack(); });
-  $('#saveCurrentTemplateBtn').addEventListener('click', saveCurrentTemplate);
-  $('#copyCurrentTemplateBtn').addEventListener('click', copyCurrentTemplate);
-  $('#previewCurrentTemplateBtn').addEventListener('click', previewCurrentTemplate);
+  document.getElementById('resetTemplatesBtn').addEventListener('click', resetTemplates);
+  document.getElementById('saveTemplatesBtn').addEventListener('click', saveAllTemplates);
+  document.getElementById('rebuildPromptBtn').addEventListener('click', ()=>{ renderPromptBoxes(); rebuildDataPack(); });
+  document.getElementById('saveCurrentTemplateBtn').addEventListener('click', saveCurrentTemplate);
+  document.getElementById('copyCurrentTemplateBtn').addEventListener('click', copyCurrentTemplate);
+  document.getElementById('previewCurrentTemplateBtn').addEventListener('click', previewCurrentTemplate);
 
-  $('#fillRawBtn').addEventListener('click', fillVideoFromSelection);
+  document.getElementById('fillRawBtn').addEventListener('click', fillVideoFromSelection);
   document.querySelectorAll('[data-optimize]').forEach(btn => btn.addEventListener('click', ()=> optimizeScript(btn.dataset.optimize)));
-  $('#copyFinalBtn').addEventListener('click', ()=> copyText(el.finalScript.value, '已複製 final 稿'));
-  $('#extractKnowledgeBtn').addEventListener('click', extractKnowledgeFromFinal);
-  $('#extractKnowledgeBtn2').addEventListener('click', extractKnowledgeFromFinal);
-  $('#pushFinalToPublishBtn').addEventListener('click', pushFinalToPublish);
-  $('#generateShortsFromFinalBtn').addEventListener('click', generateShorts);
-  $('#saveLongVideoDraftBtn').addEventListener('click', saveLongVideoDraft);
+  document.getElementById('copyFinalBtn').addEventListener('click', ()=> copyText(el.finalScript.value, '已複製 final 稿'));
+  document.getElementById('extractKnowledgeBtn').addEventListener('click', extractKnowledgeFromFinal);
+  document.getElementById('extractKnowledgeBtn2').addEventListener('click', extractKnowledgeFromFinal);
+  document.getElementById('pushFinalToPublishBtn').addEventListener('click', pushFinalToPublish);
+  document.getElementById('generateShortsFromFinalBtn').addEventListener('click', generateShorts);
+  document.getElementById('saveLongVideoDraftBtn').addEventListener('click', saveLongVideoDraft);
 
-  $('#generateShortsBtn').addEventListener('click', generateShorts);
-  $('#copyAllShortsBtn').addEventListener('click', copyAllShorts);
-  $('#saveShortsBtn').addEventListener('click', saveShortsRows);
+  document.getElementById('generateShortsBtn').addEventListener('click', generateShorts);
+  document.getElementById('copyAllShortsBtn').addEventListener('click', copyAllShorts);
+  document.getElementById('saveShortsBtn').addEventListener('click', saveShortsRows);
 
-  $('#generatePublishBtn').addEventListener('click', generatePublishContent);
-  $('#copyPublishBtn').addEventListener('click', ()=> copyText(buildPublishBundle(), '已複製發布內容'));
-  $('#savePublishBtn').addEventListener('click', savePublishRows);
+  document.getElementById('generatePublishBtn').addEventListener('click', generatePublishContent);
+  document.getElementById('copyPublishBtn').addEventListener('click', ()=> copyText(buildPublishBundle(), '已複製發布內容'));
+  document.getElementById('savePublishBtn').addEventListener('click', savePublishRows);
 
-  $('#fillWeeklyFromSelectionBtn').addEventListener('click', fillWeeklyFromSelection);
-  $('#saveWeeklyBtn').addEventListener('click', saveWeeklyPlan);
-  $('#fillCourseFromSelectionBtn').addEventListener('click', fillCourseFromSelection);
-  $('#saveCourseBtn').addEventListener('click', saveCourseDraft);
+  document.getElementById('fillWeeklyFromSelectionBtn').addEventListener('click', fillWeeklyFromSelection);
+  document.getElementById('saveWeeklyBtn').addEventListener('click', saveWeeklyPlan);
+  document.getElementById('fillCourseFromSelectionBtn').addEventListener('click', fillCourseFromSelection);
+  document.getElementById('saveCourseBtn').addEventListener('click', saveCourseDraft);
 
-  $('#copyKnowledgeBtn').addEventListener('click', ()=> copyText(buildKnowledgeBundle(), '已複製知識草稿'));
-  $('#saveKnowledgeDraftBtn').addEventListener('click', saveKnowledgeDraft);
+  document.getElementById('copyKnowledgeBtn').addEventListener('click', ()=> copyText(buildKnowledgeBundle(), '已複製知識草稿'));
+  document.getElementById('saveKnowledgeDraftBtn').addEventListener('click', saveKnowledgeDraft);
 
   el.searchInput.addEventListener('input', renderCurrentCards);
   el.storyFullText.addEventListener('input', ()=>{
@@ -820,11 +821,35 @@ function saveGasUrl(){
   setStatus(null, state.gasUrl ? '已儲存，請按測試' : '尚未設定 GAS URL');
 }
 
+// FIX: GAS fetch with proper redirect and CORS handling
+async function gasGet(action, extra={}){
+  const url = new URL(state.gasUrl);
+  url.searchParams.set('action', action);
+  Object.entries(extra).forEach(([k,v])=> url.searchParams.set(k,v));
+  const res = await fetch(url.toString(), {
+    method: 'GET',
+    redirect: 'follow'
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); } catch(e) { throw new Error('GAS 回傳非 JSON：' + text.slice(0, 200)); }
+}
+
+async function gasPost(payload){
+  const res = await fetch(state.gasUrl, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+  const text = await res.text();
+  try { return JSON.parse(text); } catch(e) { throw new Error('GAS 回傳非 JSON：' + text.slice(0, 200)); }
+}
+
 async function testAndLoad(){
   if(!state.gasUrl) return alert('請先貼上 GAS URL');
   setStatus(false, '測試連線中...');
   try{
-    const ping = await apiGet('ping');
+    const ping = await gasGet('ping');
     if(!ping || ping.ok === false) throw new Error(ping?.error || 'ping failed');
     state.connectionOk = true;
     setStatus(true, 'GAS 連線成功');
@@ -844,11 +869,11 @@ async function loadAllData(){
   if(!state.gasUrl) return;
   try{
     for(const src of DB_SOURCES){
-      const res = await apiGet(src.action);
+      const res = await gasGet(src.action);
       state.datasets[src.key] = normalizeArrayResponse(res);
     }
-    state.weekly = normalizeArrayResponse(await apiGet('getWeeklyPlan'));
-    state.courses = normalizeArrayResponse(await apiGet('getCourses'));
+    state.weekly = normalizeArrayResponse(await gasGet('getWeeklyPlan'));
+    state.courses = normalizeArrayResponse(await gasGet('getCourses'));
     renderCurrentCards();
     updateSelectedBox();
     renderPromptBoxes();
@@ -863,25 +888,14 @@ async function loadAllData(){
 async function refreshCurrentDataset(){
   const src = DB_SOURCES.find(x=>x.key===state.activeDbKey);
   if(!src || !state.gasUrl) return;
-  const res = await apiGet(src.action);
+  const res = await gasGet(src.action);
   state.datasets[src.key] = normalizeArrayResponse(res);
   renderCurrentCards();
 }
 
-function apiGet(action, extra={}){
-  const url = new URL(state.gasUrl);
-  url.searchParams.set('action', action);
-  Object.entries(extra).forEach(([k,v])=> url.searchParams.set(k,v));
-  return fetch(url.toString()).then(r=>r.json());
-}
-
-function apiPost(payload){
-  return fetch(state.gasUrl, {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  }).then(r=>r.json());
-}
+// Keep apiGet and apiPost as aliases for backwards compatibility with any other call sites
+function apiGet(action, extra={}){ return gasGet(action, extra); }
+function apiPost(payload){ return gasPost(payload); }
 
 function normalizeArrayResponse(res){
   if(Array.isArray(res)) return res;
@@ -1176,10 +1190,10 @@ function buildDataPack(){
 
   sections.push('\n--------------------------------------------------\n');
   sections.push('【生成偏好】');
-  sections.push(`生成模式：${$('#genMode').value}`);
-  sections.push(`風格傾向：${$('#styleMode').value}`);
-  sections.push(`情緒強度：${$('#emotionLevel').value}`);
-  sections.push(`Hook強度：${$('#hookLevel').value}`);
+  sections.push(`生成模式：${document.getElementById('genMode').value}`);
+  sections.push(`風格傾向：${document.getElementById('styleMode').value}`);
+  sections.push(`情緒強度：${document.getElementById('emotionLevel').value}`);
+  sections.push(`Hook強度：${document.getElementById('hookLevel').value}`);
   return sections.join('\n');
 }
 
@@ -1199,9 +1213,9 @@ function getTemplateVariables(){
     '{{insight}}': state.selected.insight.map(x => `${getItemTitle(x)}：${getItemDesc(x,'insight')}`).join('\n'),
     '{{tools}}': state.selected.tool.map(t => `${getItemTitle(t)}：${getItemDesc(t,'tools')}`).join('\n'),
     '{{final_text}}': el.finalScript.value || '',
-    '{{style_mode}}': $('#styleMode').value,
-    '{{emotion_level}}': $('#emotionLevel').value,
-    '{{hook_level}}': $('#hookLevel').value
+    '{{style_mode}}': document.getElementById('styleMode').value,
+    '{{emotion_level}}': document.getElementById('emotionLevel').value,
+    '{{hook_level}}': document.getElementById('hookLevel').value
   };
 }
 
@@ -1834,7 +1848,7 @@ async function saveWeeklyPlan(){
     const res = await apiPost({ action:'saveWeeklyPlan', row });
     if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已寫入 weekly_plan');
-    state.weekly = normalizeArrayResponse(await apiGet('getWeeklyPlan'));
+    state.weekly = normalizeArrayResponse(await gasGet('getWeeklyPlan'));
     renderWeeklyTable();
   }catch(err){
     alert('寫入失敗：' + err.message);
@@ -1911,7 +1925,7 @@ async function saveCourseDraft(){
     const res = await apiPost({ action:'saveCourseDraft', mode:'append', row });
     if(res.ok === false) throw new Error(res.error || '未知錯誤');
     alert('已寫入 course_db');
-    state.courses = normalizeArrayResponse(await apiGet('getCourses'));
+    state.courses = normalizeArrayResponse(await gasGet('getCourses'));
     renderCourseTable();
   }catch(err){
     alert('寫入失敗：' + err.message);
@@ -1985,7 +1999,10 @@ function escapeHtml(value){
 function escapeAttr(value){ return escapeHtml(value).replace(/\n/g, '&#10;'); }
 function clone(obj){ return JSON.parse(JSON.stringify(obj)); }
 function unique(v, i, arr){ return arr.indexOf(v) === i; }
-function $(sel){ return document.getElementById(sel); }
+
+// FIX: Removed broken $() shorthand that used getElementById but was called with '#' prefix
+// All button lookups now use document.getElementById() directly in bindEvents()
+
 async function copyText(text, okText='已複製'){
   if(!text) return alert('目前沒有內容可複製');
   try{
