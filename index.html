@@ -952,9 +952,43 @@ function buildCard(item, sourceKey){
   return card;
 }
 
-function getItemTitle(item){ return item.title || item.subtitle || item.topic || item.tool_name || item.id || item.story_id || '未命名'; }
+function getItemTitle(item){
+  return item.title
+    || item['標題']
+    || item.headline
+    || item.name
+    || item.subtitle
+    || item['篇名']
+    || item.topic
+    || item.tool_name
+    || item.main_theme
+    || item['大主題']
+    || item.sub_theme
+    || item['子主題']
+    || item.serial_no
+    || item.id
+    || item.story_id
+    || item['編號']
+    || '未命名';
+}
 function getItemDesc(item, sourceKey){
-  return item.summary || item.content || item.parenting_insight || item.life_example || item.description || item.core_function || item.notes || `資料來源：${sourceKey}`;
+  return item.summary
+    || item['摘要']
+    || item.content
+    || item['內容']
+    || item.parenting_insight
+    || item.life_example
+    || item.description
+    || item['說明']
+    || item.core_function
+    || item.notes
+    || item.emotion_keywords
+    || item['情緒關鍵字']
+    || item.main_theme
+    || item['大主題']
+    || item.sub_theme
+    || item['子主題']
+    || `資料來源：${sourceKey}`;
 }
 function getItemTags(item){
   const raw = item.tags || item.theme_group || item.scenario_type || item.decode_type || item.tool_type || item.emotion_type || '';
@@ -962,8 +996,12 @@ function getItemTags(item){
 }
 function getItemMeta(item){
   const arr = [];
-  if(item.id || item.story_id) arr.push(String(item.id || item.story_id));
+  if(item.id || item.story_id || item.serial_no || item['編號']) {
+    arr.push(String(item.id || item.story_id || item.serial_no || item['編號']));
+  }
   if(item.toolCode || item.tool_code) arr.push(item.toolCode || item.tool_code);
+  if(item.main_theme || item['大主題']) arr.push('主題：' + (item.main_theme || item['大主題']));
+  if(item.sub_theme || item['子主題']) arr.push('子題：' + (item.sub_theme || item['子主題']));
   if(item.tool_main) arr.push('主工具：' + item.tool_main);
   if(item.priority) arr.push('優先：' + item.priority);
   if(item.video_type) arr.push(item.video_type);
@@ -1134,7 +1172,7 @@ function buildDataPack(){
   sections.push('【心靈感悟】');
   if(insights.length){
     insights.forEach((x, i)=>{
-      sections.push(`${i+1}. 標題：${x.title || ''}`);
+      sections.push(`${i+1}. 標題：${x.title || x['標題'] || x.main_theme || x['大主題'] || x.sub_theme || x['子主題'] || x.serial_no || ''}`);
       sections.push(`大主題：${x.main_theme || ''}`);
       sections.push(`子主題：${x.sub_theme || ''}`);
       sections.push(`對應情境：${x.scenario_type || ''}`);
